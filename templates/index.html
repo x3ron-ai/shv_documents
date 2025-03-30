@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Генератор Word-документов</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="document" id="document">
+            <h2>Формируемый документ</h2>
+            <form method="POST" id="docForm" enctype="multipart/form-data">
+                <div id="dropZone" class="drop-zone"></div>
+                <input type="submit" value="Сгенерировать Word">
+            </form>
+        </div>
+        <div class="sidebar">
+            <h3>Блоки</h3>
+            <div class="block-option" draggable="true" ondragstart="drag(event)" data-type="text">Текст</div>
+            <div class="block-option" draggable="true" ondragstart="drag(event)" data-type="table">Таблица</div>
+            <div class="block-option" draggable="true" ondragstart="drag(event)" data-type="numbered_list">Нумерованный список</div>
+            <div class="block-option" draggable="true" ondragstart="drag(event)" data-type="bullet_list">Список с маркерами</div>
+            <div class="block-option" draggable="true" ondragstart="drag(event)" data-type="image">Изображение</div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
