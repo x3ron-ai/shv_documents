@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мои документы</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="header">
@@ -12,20 +13,25 @@
         <p>Добро пожаловать, {{ user.username }}! <a href="{{ url_for('logout') }}">Выйти</a></p>
     </header>
     <div class="container">
-        <h2>Список документов</h2>
-        <ul>
-            {% for doc in documents %}
-                <li><a href="{{ url_for('edit_document', doc_id=doc.id) }}">{{ doc.title }}</a> (Создан: {{ doc.created_at }})</li>
-            {% endfor %}
-        </ul>
-        <a href="{{ url_for('create') }}" class="create-btn">Создать новый документ</a>
-        <h2>Доступные шаблоны</h2>
-        <ul>
-            {% for template in templates %}
-                <li>{{ template.title }} <img src="/{{ template.preview_path }}" style="max-width: 100px;"></li>
-            {% endfor %}
-        </ul>
-        <a href="{{ url_for('create_template') }}" class="create-btn">Создать новый шаблон</a>
+        <main class="document">
+            <h2>Ваши документы</h2>
+            <ul class="document-list">
+                {% for doc in documents %}
+                    <li><a href="{{ url_for('edit_document', doc_id=doc.id) }}">{{ doc.title }}</a> (Создан: {{ doc.created_at }})</li>
+                {% endfor %}
+            </ul>
+            <a href="{{ url_for('create') }}" class="create-btn">Создать новый документ</a>
+            <h2>Доступные шаблоны</h2>
+            <ul class="document-list">
+                {% for template in templates %}
+                    <li>{{ template.title }} <img src="/{{ template.preview_path }}" style="max-width: 100px; border-radius: 4px;"></li>
+                {% endfor %}
+            </ul>
+            <a href="{{ url_for('create_template') }}" class="create-btn">Создать новый шаблон</a>
+        </main>
     </div>
+    <footer class="footer">
+        <p>© 2025 Генератор документов</p>
+    </footer>
 </body>
 </html>

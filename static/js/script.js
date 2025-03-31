@@ -19,21 +19,10 @@ function drop(event) {
     const data = event.dataTransfer.getData("text");
     if (data.startsWith('block_')) {
         const block = document.getElementById(data);
-        event.target.appendChild(block);
+        event.target.closest('#dropZone').appendChild(block);
         saveTemplate();
     } else {
         addBlock(data);
-        saveTemplate();
-    }
-}
-
-function dropBlock(event) {
-    event.preventDefault();
-    const blockId = event.dataTransfer.getData("text");
-    const block = document.getElementById(blockId);
-    const target = event.target.closest('.block') || dropZone;
-    if (target !== block) {
-        target.appendChild(block);
         saveTemplate();
     }
 }
@@ -44,8 +33,8 @@ function addBlock(type) {
     block.draggable = true;
     block.id = `block_${blockCount++}`;
     block.ondragstart = dragBlock;
-    block.ondragover = (e) => e.preventDefault();
-    block.ondrop = dropBlock;
+    block.ondragover = allowDrop;
+    block.ondrop = drop;
     block.ondragend = () => block.classList.remove('dragging');
 
     let html = `<input type="hidden" name="block_type[]" value="${type}">`;
@@ -61,29 +50,29 @@ function addBlock(type) {
             <input type="hidden" name="face_block_${blockCount - 1}" id="face_${block.id}" value="Times New Roman">
             <input type="hidden" name="size_block_${blockCount - 1}" id="size_${block.id}" value="14">
             <div class="style-menu">
-                <label>Жирный: <input type="checkbox" onchange="updateStyle('${block.id}', 'bold', this.checked); saveTemplate()"></label>
-                <label>Размер: <input type="number" min="8" max="72" value="14" onchange="updateStyle('${block.id}', 'size', this.value); saveTemplate()"></label>
-                <label>Шрифт: <select onchange="updateStyle('${block.id}', 'face', this.value); saveTemplate()">
+                <label><input type="checkbox" onchange="updateStyle('${block.id}', 'bold', this.checked)"> Жирный</label>
+                <label>Размер: <input type="number" min="8" max="72" value="14" onchange="updateStyle('${block.id}', 'size', this.value)"></label>
+                <label>Шрифт: <select onchange="updateStyle('${block.id}', 'face', this.value)">
                     <option value="Times New Roman" selected>Times New Roman</option>
                     <option value="Arial">Arial</option>
                     <option value="Calibri">Calibri</option>
                 </select></label>
-                <label>Цвет: <input type="color" value="#000000" onchange="updateStyle('${block.id}', 'color', this.value.slice(1)); saveTemplate()"></label>
-                <label>Выравнивание: <select onchange="updateStyle('${block.id}', 'align', this.value); saveTemplate()">
+                <label>Цвет: <input type="color" value="#000000" onchange="updateStyle('${block.id}', 'color', this.value.slice(1))"></label>
+                <label>Выравнивание: <select onchange="updateStyle('${block.id}', 'align', this.value)">
                     <option value="left">Слева</option>
                     <option value="center">По центру</option>
                     <option value="right">Справа</option>
                     <option value="justify" selected>По ширине</option>
                 </select></label>
-                <label>Отступ слева (см): <input type="number" min="0" step="0.1" value="0" onchange="updateIndent('${block.id}', 'indent_left', this.value); saveTemplate()"></label>
-                <label>Первая строка (см): <input type="number" min="0" step="0.1" value="0" onchange="updateIndent('${block.id}', 'indent_first_line', this.value); saveTemplate()"></label>
-                <label>Междустрочный: <input type="number" min="0.5" step="0.1" value="1.5" onchange="updateIndent('${block.id}', 'line_spacing', this.value); saveTemplate()"></label>
+                <label>Отступ слева (см): <input type="number" min="0" step="0.1" value="0" onchange="updateIndent('${block.id}', 'indent_left', this.value)"></label>
+                <label>Первая строка (см): <input type="number" min="0" step="0.1" value="0" onchange="updateIndent('${block.id}', 'indent_first_line', this.value)"></label>
+                <label>Междустрочный: <input type="number" min="0.5" step="0.1" value="1.5" onchange="updateIndent('${block.id}', 'line_spacing', this.value)"></label>
             </div>
         `;
     } else if (type === 'table') {
         html += `
             <textarea name="content[]" placeholder="Имя,Возраст,Город\nИван,25,Москва" oninput="saveTemplate()"></textarea>
-            <label>Ширина столбцов: <input type="text" name="col_widths" value="2,1,2" oninput="saveTemplate()"></label>
+            <label>Ширина столбцов (см): <input type="text" name="col_widths" value="2,1,2" oninput="saveTemplate()"></label>
         `;
     } else if (type === 'numbered_list' || type === 'bullet_list') {
         html += `
@@ -94,10 +83,10 @@ function addBlock(type) {
         html += `
             <input type="file" name="image[]" accept="image/*" onchange="previewImage(this, '${block.id}')">
             <input type="hidden" name="image_path[]" id="image_path_${block.id}">
-            <img id="preview_${block.id}" class="image-preview" style="display: none; max-width: 100%; margin-top: 10px;">
-            <label>Название картинки: <input type="text" name="image_caption[]" id="caption_${block.id}" placeholder="Введите название" oninput="saveTemplate()"></label>
+            <img id="preview_${block.id}" class="image-preview" style="display: none;">
+            <label>Подпись: <input type="text" name="image_caption[]" id="caption_${block.id}" oninput="saveTemplate()"></label>
             <div class="style-menu">
-                <label>Жирный: <input type="checkbox" name="caption_bold[]" onchange="saveTemplate()"></label>
+                <label><input type="checkbox" name="caption_bold[]" onchange="saveTemplate()"> Жирный</label>
                 <label>Размер: <input type="number" name="caption_size[]" min="8" max="72" value="12" onchange="saveTemplate()"></label>
                 <label>Шрифт: <select name="caption_face[]" onchange="saveTemplate()">
                     <option value="Times New Roman" selected>Times New Roman</option>
@@ -109,31 +98,27 @@ function addBlock(type) {
         `;
     }
 
-    html += `<button type="button" onclick="removeBlock('${block.id}'); saveTemplate()">Удалить</button>`;
+    html += `<button type="button" onclick="removeBlock('${block.id}')">Удалить</button>`;
     block.innerHTML = html;
     dropZone.appendChild(block);
 
     if (type === 'text') {
         const editable = block.querySelector('.contenteditable');
         editable.addEventListener('input', () => {
-            const contentInput = block.querySelector(`#content_${block.id}`);
-            contentInput.value = serializeContent(editable, block.id);
+            block.querySelector(`#content_${block.id}`).value = editable.innerHTML;
             saveTemplate();
         });
-        const contentInput = block.querySelector(`#content_${block.id}`);
-        contentInput.value = serializeContent(editable, block.id);
     }
 }
 
 function removeBlock(blockId) {
-    const block = document.getElementById(blockId);
-    block.remove();
+    document.getElementById(blockId).remove();
+    saveTemplate();
 }
 
 function updateStyle(blockId, property, value) {
     const block = document.getElementById(blockId);
     const editable = block.querySelector('.contenteditable');
-    const contentInput = block.querySelector(`#content_${blockId}`);
     if (property === 'bold') {
         editable.style.fontWeight = value ? 'bold' : 'normal';
     } else if (property === 'size') {
@@ -148,16 +133,13 @@ function updateStyle(blockId, property, value) {
         editable.style.textAlign = value;
         block.querySelector(`#align_${blockId}`).value = value;
     }
-    contentInput.value = serializeContent(editable, blockId);
+    block.querySelector(`#content_${blockId}`).value = editable.innerHTML;
+    saveTemplate();
 }
 
 function updateIndent(blockId, property, value) {
-    const block = document.getElementById(blockId);
-    block.querySelector(`#${property}_${blockId}`).value = value;
-}
-
-function serializeContent(editable, blockId) {
-    return editable.innerHTML;
+    document.getElementById(`${property}_${blockId}`).value = value;
+    saveTemplate();
 }
 
 function previewImage(input, blockId) {
@@ -172,11 +154,12 @@ function previewImage(input, blockId) {
         })
         .then(response => response.json())
         .then(data => {
-            const imagePath = data.path;
-            preview.src = imagePath;
-            preview.style.display = 'block';
-            pathInput.value = imagePath;
-            saveTemplate();
+            if (data.path) {
+                preview.src = data.path;
+                preview.style.display = 'block';
+                pathInput.value = data.path;
+                saveTemplate();
+            }
         })
         .catch(error => console.error('Ошибка загрузки изображения:', error));
     }
@@ -187,58 +170,38 @@ function saveTemplate() {
     fetch('/document/' + docId, {
         method: 'POST',
         body: formData
-    }).then(response => {
-        if (!response.ok) {
-            console.error('Ошибка сохранения документа');
-        }
-    }).catch(error => console.error('Ошибка:', error));
+    }).catch(error => console.error('Ошибка сохранения:', error));
 }
 
 dropZone.ondragover = allowDrop;
 dropZone.ondrop = drop;
 
-// Логика загрузки документа
 const docId = document.getElementById('document').getAttribute('data-template-id');
 if (docId) {
     fetch('/get_template/' + docId)
         .then(response => response.json())
         .then(data => {
-            const defaultFontFace = data.default_font_face || 'Times New Roman';
-            const defaultFontSize = data.default_font_size || 14;
-            const defaultIndentLeft = data.default_indent_left || 0;
-            const defaultIndentFirstLine = data.default_indent_first_line || 0;
-            const defaultLineSpacing = data.default_line_spacing || 1.5;
-
             data.blocks.forEach((type, index) => {
                 addBlock(type);
                 const block = document.getElementById(`block_${blockCount - 1}`);
                 if (type === 'text') {
-                    block.querySelector('.contenteditable').innerHTML = data.contents[index];
+                    const editable = block.querySelector('.contenteditable');
+                    editable.innerHTML = data.contents[index];
                     block.querySelector(`#content_${block.id}`).value = data.contents[index];
                     block.querySelector(`#align_${block.id}`).value = data.aligns[index];
-                    const alignSelect = block.querySelector(`select[onchange*="align"]`);
-                    if (alignSelect) alignSelect.value = data.aligns[index];
+                    block.querySelector(`select[onchange*="align"]`).value = data.aligns[index];
                     block.querySelector(`#indent_left_${block.id}`).value = data.indents_left[index];
-                    const indentLeftInput = block.querySelector(`input[onchange*="indent_left"]`);
-                    if (indentLeftInput) indentLeftInput.value = data.indents_left[index];
+                    block.querySelector(`input[onchange*="indent_left"]`).value = data.indents_left[index];
                     block.querySelector(`#indent_first_line_${block.id}`).value = data.indents_first_line[index];
-                    const indentFirstLineInput = block.querySelector(`input[onchange*="indent_first_line"]`);
-                    if (indentFirstLineInput) indentFirstLineInput.value = data.indents_first_line[index];
+                    block.querySelector(`input[onchange*="indent_first_line"]`).value = data.indents_first_line[index];
                     block.querySelector(`#line_spacing_${block.id}`).value = data.line_spacings[index];
-                    const lineSpacingInput = block.querySelector(`input[onchange*="line_spacing"]`);
-                    if (lineSpacingInput) lineSpacingInput.value = data.line_spacings[index];
-                    const fontFace = data.font_faces[index] || defaultFontFace;
-                    const faceInput = block.querySelector(`#face_${block.id}`);
-                    if (faceInput) faceInput.value = fontFace;
-                    block.querySelector('.contenteditable').style.fontFamily = fontFace;
-                    const faceSelect = block.querySelector(`select[onchange*="face"]`);
-                    if (faceSelect) faceSelect.value = fontFace;
-                    const fontSize = data.font_sizes[index] || defaultFontSize;
-                    const sizeInput = block.querySelector(`#size_${block.id}`);
-                    if (sizeInput) sizeInput.value = fontSize;
-                    block.querySelector('.contenteditable').style.fontSize = `${fontSize}px`;
-                    const sizeInputField = block.querySelector(`input[onchange*="size"]`);
-                    if (sizeInputField) sizeInputField.value = fontSize;
+                    block.querySelector(`input[onchange*="line_spacing"]`).value = data.line_spacings[index];
+                    block.querySelector(`#face_${block.id}`).value = data.font_faces[index];
+                    editable.style.fontFamily = data.font_faces[index];
+                    block.querySelector(`select[onchange*="face"]`).value = data.font_faces[index];
+                    block.querySelector(`#size_${block.id}`).value = data.font_sizes[index];
+                    editable.style.fontSize = `${data.font_sizes[index]}px`;
+                    block.querySelector(`input[onchange*="size"]`).value = data.font_sizes[index];
                 } else if (type === 'table') {
                     block.querySelector('textarea').value = data.contents[index];
                     block.querySelector('input[name="col_widths"]').value = data.col_widths;
@@ -247,7 +210,7 @@ if (docId) {
                 } else if (type === 'image') {
                     block.querySelector(`#caption_${block.id}`).value = data.captions[index];
                     if (data.paths[index]) {
-                        block.querySelector(`#preview_${block.id}`).src = '/' + data.paths[index];
+                        block.querySelector(`#preview_${block.id}`).src = data.paths[index];
                         block.querySelector(`#preview_${block.id}`).style.display = 'block';
                         block.querySelector(`#image_path_${block.id}`).value = data.paths[index];
                     }

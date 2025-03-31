@@ -2,7 +2,7 @@ import os
 import random
 import string
 import subprocess
-from flask import Flask, render_template, request, redirect, url_for, send_file, make_response
+from flask import Flask, render_template, request, redirect, url_for, send_file, make_response, jsonify
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -41,16 +41,13 @@ def get_current_user():
     session_token = request.cookies.get('session_token')
     if not session_token:
         return None
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT user_id FROM sessions WHERE session_token = %s AND expires_at > NOW()', (session_token,))
-    session = cur.fetchone()
-    if session:
-        cur.execute('SELECT id, username FROM users WHERE id = %s', (session['user_id'],))
-        user = cur.fetchone()
-        conn.close()
-        return user
-    conn.close()
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute('SELECT user_id FROM sessions WHERE session_token = %s AND expires_at > NOW()', (session_token,))
+            session = cur.fetchone()
+            if session:
+                cur.execute('SELECT id, username FROM users WHERE id = %s', (session['user_id'],))
+                return cur.fetchone()
     return None
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -58,23 +55,20 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('SELECT id, password_hash FROM users WHERE username = %s', (username,))
-        user = cur.fetchone()
-        if user and check_password_hash(user['password_hash'], password):
-            session_token = generate_session_token()
-            cur.execute('INSERT INTO sessions (user_id, session_token, expires_at) VALUES (%s, %s, NOW() + INTERVAL \'7 days\')',
-                        (user['id'], session_token))
-            conn.commit()
-            resp = make_response(redirect(url_for('index')))
-            resp.set_cookie('session_token', session_token, max_age=7*24*60*60)
-            conn.close()
-            return resp
-        conn.close()
-        return 'Неверный логин или пароль'
-    templates = get_all_templates()
-    return render_template('login.html', templates=templates)
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT id, password_hash FROM users WHERE username = %s', (username,))
+                user = cur.fetchone()
+                if user and check_password_hash(user['password_hash'], password):
+                    session_token = generate_session_token()
+                    cur.execute('INSERT INTO sessions (user_id, session_token, expires_at) VALUES (%s, %s, NOW() + INTERVAL \'7 days\')',
+                                (user['id'], session_token))
+                    conn.commit()
+                    resp = make_response(redirect(url_for('index')))
+                    resp.set_cookie('session_token', session_token, max_age=7*24*60*60)
+                    return resp
+                return render_template('login.html', templates=get_all_templates(), error='Неверный логин или пароль')
+    return render_template('login.html', templates=get_all_templates(), error=None)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -82,52 +76,46 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        conn = get_db_connection()
-        cur = conn.cursor()
-        try:
-            cur.execute('INSERT INTO users (username, password_hash, email) VALUES (%s, %s, %s)',
-                        (username, generate_password_hash(password), email))
-            conn.commit()
-            return redirect(url_for('login'))
-        except psycopg2.IntegrityError:
-            conn.rollback()
-            return 'Такой юзер уже есть'
-        finally:
-            conn.close()
-    return render_template('register.html')
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                try:
+                    cur.execute('INSERT INTO users (username, password_hash, email) VALUES (%s, %s, %s)',
+                                (username, generate_password_hash(password), email))
+                    conn.commit()
+                    return redirect(url_for('login'))
+                except psycopg2.IntegrityError:
+                    conn.rollback()
+                    return render_template('register.html', error='Пользователь с таким именем или email уже существует')
+    return render_template('register.html', error=None)
 
 @app.route('/logout')
 def logout():
     session_token = request.cookies.get('session_token')
     if session_token:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('DELETE FROM sessions WHERE session_token = %s', (session_token,))
-        conn.commit()
-        conn.close()
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute('DELETE FROM sessions WHERE session_token = %s', (session_token,))
+                conn.commit()
     resp = make_response(redirect(url_for('login')))
     resp.set_cookie('session_token', '', expires=0)
     return resp
 
 def get_all_templates():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT id, title, preview_path FROM templates')
-    templates = cur.fetchall()
-    conn.close()
-    return templates
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute('SELECT id, title, preview_path FROM templates')
+            return cur.fetchall()
 
 @app.route('/')
 def index():
     user = get_current_user()
     if not user:
         return redirect(url_for('login'))
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT id, title, created_at FROM documents WHERE owner_id = %s', (user['id'],))
-    documents = cur.fetchall()
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute('SELECT id, title, created_at FROM documents WHERE owner_id = %s ORDER BY created_at DESC', (user['id'],))
+            documents = cur.fetchall()
     templates = get_all_templates()
-    conn.close()
     return render_template('index.html', documents=documents, templates=templates, user=user)
 
 @app.route('/create', methods=['GET', 'POST'])
@@ -137,31 +125,30 @@ def create():
         return redirect(url_for('login'))
     if request.method == 'POST':
         template_id = request.form.get('template_id')
-        title = request.form['title']
-        xml_path = f"{DOCUMENTS_DIR}/{user['id']}_{title.replace(' ', '_')}.xml"
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('INSERT INTO documents (owner_id, template_id, title, xml_path) VALUES (%s, %s, %s, %s) RETURNING id',
-                    (user['id'], template_id if template_id else None, title, xml_path))
-        doc_id = cur.fetchone()['id']
-        conn.commit()
-        conn.close()
+        title = request.form['title'].strip()
+        if not title:
+            return render_template('create.html', templates=get_all_templates(), error='Название документа не может быть пустым')
+        xml_path = f"{DOCUMENTS_DIR}/{user['id']}_{title.replace(' ', '_')}_{random.randint(1000, 9999)}.xml"
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute('INSERT INTO documents (owner_id, template_id, title, xml_path) VALUES (%s, %s, %s, %s) RETURNING id',
+                            (user['id'], template_id if template_id else None, title, xml_path))
+                doc_id = cur.fetchone()['id']
+                conn.commit()
         return redirect(url_for('edit_document', doc_id=doc_id))
-    templates = get_all_templates()
-    return render_template('create.html', templates=templates)
+    return render_template('create.html', templates=get_all_templates(), error=None)
 
 @app.route('/document/<int:doc_id>', methods=['GET', 'POST'])
 def edit_document(doc_id):
     user = get_current_user()
     if not user:
         return redirect(url_for('login'))
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM documents WHERE id = %s AND owner_id = %s', (doc_id, user['id']))
-    document = cur.fetchone()
-    if not document:
-        conn.close()
-        return 'Документ не найден или не твой, ', 403
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute('SELECT * FROM documents WHERE id = %s AND owner_id = %s', (doc_id, user['id']))
+            document = cur.fetchone()
+            if not document:
+                return 'Документ не найден или не принадлежит вам', 403
 
     if request.method == 'POST':
         blocks = request.form.getlist('block_type[]')
@@ -171,7 +158,6 @@ def edit_document(doc_id):
         indents_first_line = request.form.getlist('indent_first_line[]')
         line_spacings = request.form.getlist('line_spacing[]')
         col_widths = request.form.get('col_widths', '2,1,2')
-        list_types = request.form.getlist('list_type[]')
         images = request.files.getlist('image[]')
         image_paths = request.form.getlist('image_path[]')
         image_captions = request.form.getlist('image_caption[]')
@@ -218,15 +204,15 @@ def edit_document(doc_id):
                         item_elem = ET.SubElement(list_elem, "item")
                         item_elem.text = item.strip()
                 content_idx += 1
-            elif block == "image" and image_idx < len(image_paths):
+            elif block == "image" and image_idx < len(images):
                 image_elem = ET.SubElement(root, "image")
-                if image_idx < len(images) and images[image_idx]:
-                    unique_filename = f"{user['id']}_{image_idx}_{images[image_idx].filename}"
+                if images[image_idx] and images[image_idx].filename:
+                    unique_filename = f"{user['id']}_{image_idx}_{random.randint(1000, 9999)}_{images[image_idx].filename}"
                     image_path = os.path.join(UPLOADS_DIR, unique_filename)
                     images[image_idx].save(image_path)
                     image_elem.set("path", image_path)
-                elif image_paths[image_idx]:
-                    image_elem.set("path", image_paths[image_idx])
+                elif image_idx < len(image_paths) and image_paths[image_idx]:
+                    image_elem.set("path", image_paths[image_idx].lstrip('/'))
                 if image_idx < len(image_captions) and image_captions[image_idx].strip():
                     image_elem.set("caption", image_captions[image_idx])
                     image_elem.set("caption_bold", "true" if image_idx < len(caption_bolds) and caption_bolds[image_idx] == "on" else "false")
@@ -235,26 +221,41 @@ def edit_document(doc_id):
                     image_elem.set("caption_color", caption_colors[image_idx].lstrip('#') if image_idx < len(caption_colors) else "000000")
                 image_idx += 1
 
-        xml_str = ET.tostring(root, encoding='utf-8', method='xml', xml_declaration=True)
+        xml_str = ET.tostring(root, encoding='utf-8', method='xml')
         with open(document['xml_path'], 'wb') as f:
             f.write(xml_str)
 
         if 'generate' in request.form:
-            cur.execute('SELECT title_page_path FROM templates WHERE id = %s', (document['template_id'],))
-            template = cur.fetchone()
+            with get_db_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute('SELECT title_page_path FROM templates WHERE id = %s', (document['template_id'],))
+                    template = cur.fetchone()
             title_page_path = template['title_page_path'] if template else None
             parser = XMLToWordParser(document['xml_path'], TEMP_DOCX, title_page_path)
             result = parser.parse_and_convert()
-            conn.close()
             if "Ошибка" not in result:
-                return send_file(TEMP_DOCX, as_attachment=True, download_name=f"document_{doc_id}.docx")
-            return f"Ошибка: {result}"
-
-        conn.close()
+                return send_file(TEMP_DOCX, as_attachment=True, download_name=f"{document['title']}_{doc_id}.docx")
+            return render_template('edit.html', template_id=doc_id, error=f"Ошибка генерации: {result}")
         return "", 204
 
-    conn.close()
-    return render_template('edit.html', template_id=doc_id)
+    return render_template('edit.html', template_id=doc_id, error=None)
+
+@app.route('/uploads/<path:filename>')
+def serve_uploaded_file(filename):
+    return send_file(os.path.join(UPLOADS_DIR, filename))
+
+@app.route('/upload_image', methods=['POST'])
+def upload_image():
+    user = get_current_user()
+    if not user:
+        return jsonify({'error': 'Не авторизован'}), 401
+    image = request.files.get('image')
+    if image and image.filename:
+        unique_filename = f"{user['id']}_{random.randint(1000, 9999)}_{image.filename}"
+        image_path = os.path.join(UPLOADS_DIR, unique_filename)
+        image.save(image_path)
+        return jsonify({'path': f"/uploads/{unique_filename}"})
+    return jsonify({'error': 'Изображение не загружено'}), 400
 
 @app.route('/create_template', methods=['GET', 'POST'])
 def create_template():
@@ -262,167 +263,143 @@ def create_template():
     if not user:
         return redirect(url_for('login'))
     if request.method == 'POST':
-        title = request.form['title']
-        title_page = request.files['title_page']
+        title = request.form['title'].strip()
+        title_page = request.files.get('title_page')
         font_face = request.form.get('font_face', 'Times New Roman')
         font_size = request.form.get('font_size', '14')
         indent_left = request.form.get('indent_left', '0')
         indent_first_line = request.form.get('indent_first_line', '0')
         line_spacing = request.form.get('line_spacing', '1.5')
 
-        title_page_path = os.path.join(UPLOADS_DIR, f"template_{user['id']}_{title.replace(' ', '_')}.docx")
+        if not title or not title_page or not title_page.filename:
+            return render_template('create_template.html', error='Заполните все обязательные поля')
+
+        title_page_path = os.path.join(UPLOADS_DIR, f"template_{user['id']}_{title.replace(' ', '_')}_{random.randint(1000, 9999)}.docx")
         title_page.save(title_page_path)
         preview_path = generate_preview(title_page_path)
 
-        if preview_path:  # Проверяем, что предпросмотр успешно создан
-            conn = get_db_connection()
-            cur = conn.cursor()
-            cur.execute('INSERT INTO templates (author_id, title, title_page_path, preview_path, default_font_face, default_font_size, default_indent_left, default_indent_first_line, default_line_spacing) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                        (user['id'], title, title_page_path, preview_path, font_face, font_size, indent_left, indent_first_line, line_spacing))
-            conn.commit()
-            conn.close()
+        if preview_path:
+            with get_db_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute('INSERT INTO templates (author_id, title, title_page_path, preview_path, default_font_face, default_font_size, default_indent_left, default_indent_first_line, default_line_spacing) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                                (user['id'], title, title_page_path, preview_path, font_face, font_size, indent_left, indent_first_line, line_spacing))
+                    conn.commit()
             return redirect(url_for('index'))
-        else:
-            return "Ошибка при создании предпросмотра, ", 500
-
-    return render_template('create_template.html')
+        return render_template('create_template.html', error='Ошибка при создании предпросмотра')
+    return render_template('create_template.html', error=None)
 
 @app.route('/get_template/<int:doc_id>')
 def get_template(doc_id):
     user = get_current_user()
     if not user:
-        return redirect(url_for('login'))
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT xml_path, template_id FROM documents WHERE id = %s AND owner_id = %s', (doc_id, user['id']))
-    document = cur.fetchone()
-    if not document:
-        conn.close()
-        return 'Документ не твой или не существует', 403
+        return jsonify({'error': 'Не авторизован'}), 401
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute('SELECT xml_path, template_id FROM documents WHERE id = %s AND owner_id = %s', (doc_id, user['id']))
+            document = cur.fetchone()
+            if not document:
+                return jsonify({'error': 'Документ не найден'}), 403
 
-    data = {
-        "blocks": [],
-        "contents": [],
-        "aligns": [],
-        "indents_left": [],
-        "indents_first_line": [],
-        "line_spacings": [],
-        "paths": [],
-        "captions": [],
-        "font_faces": [],
-        "font_sizes": [],
-        "col_widths": "2,1,2"
-    }
+            data = {
+                "blocks": [],
+                "contents": [],
+                "aligns": [],
+                "indents_left": [],
+                "indents_first_line": [],
+                "line_spacings": [],
+                "paths": [],
+                "captions": [],
+                "font_faces": [],
+                "font_sizes": [],
+                "col_widths": "2,1,2"
+            }
 
-    if os.path.exists(document['xml_path']):
-        with open(document['xml_path'], 'r', encoding='utf-8') as f:
-            root = ET.fromstring(f.read())
-            for elem in root:
-                data["blocks"].append(elem.tag)
-                if elem.tag == "text":
-                    data["contents"].append(elem.text or "")
-                    data["aligns"].append(elem.get("align", "justify"))
-                    data["indents_left"].append(elem.get("indent_left", "0"))
-                    data["indents_first_line"].append(elem.get("indent_first_line", "0"))
-                    data["line_spacings"].append(elem.get("line_spacing", "1.5"))
-                    data["paths"].append("")
-                    data["captions"].append("")
-                    data["font_faces"].append(elem.get("font_face", "Times New Roman"))
-                    data["font_sizes"].append(elem.get("font_size", "14"))
-                elif elem.tag == "table":
-                    rows = [",".join(cell.text or "" for cell in row.findall("cell")) for row in elem.findall("row")]
-                    data["contents"].append("\n".join(rows))
-                    data["aligns"].append("")
-                    data["indents_left"].append("0")
-                    data["indents_first_line"].append("0")
-                    data["line_spacings"].append("1.5")
-                    data["paths"].append("")
-                    data["captions"].append("")
-                    data["font_faces"].append("")
-                    data["font_sizes"].append("")
-                elif elem.tag in ["numbered_list", "bullet_list"]:
-                    items = [item.text or "" for item in elem.findall("item")]
-                    data["contents"].append("\n".join(items))
-                    data["aligns"].append("")
-                    data["indents_left"].append("0")
-                    data["indents_first_line"].append("0")
-                    data["line_spacings"].append("1.5")
-                    data["paths"].append("")
-                    data["captions"].append("")
-                    data["font_faces"].append("")
-                    data["font_sizes"].append("")
-                elif elem.tag == "image":
-                    data["contents"].append("")
-                    data["aligns"].append("")
-                    data["indents_left"].append("0")
-                    data["indents_first_line"].append("0")
-                    data["line_spacings"].append("1.5")
-                    data["paths"].append(elem.get("path", ""))
-                    data["captions"].append(elem.get("caption", ""))
-                    data["font_faces"].append("")
-                    data["font_sizes"].append("")
+            if os.path.exists(document['xml_path']):
+                with open(document['xml_path'], 'r', encoding='utf-8') as f:
+                    root = ET.fromstring(f.read())
+                    for elem in root:
+                        data["blocks"].append(elem.tag)
+                        if elem.tag == "text":
+                            data["contents"].append(elem.text or "")
+                            data["aligns"].append(elem.get("align", "justify"))
+                            data["indents_left"].append(elem.get("indent_left", "0"))
+                            data["indents_first_line"].append(elem.get("indent_first_line", "0"))
+                            data["line_spacings"].append(elem.get("line_spacing", "1.5"))
+                            data["paths"].append("")
+                            data["captions"].append("")
+                            data["font_faces"].append(elem.get("font_face", "Times New Roman"))
+                            data["font_sizes"].append(elem.get("font_size", "14"))
+                        elif elem.tag == "table":
+                            rows = [",".join(cell.text or "" for cell in row.findall("cell")) for row in elem.findall("row")]
+                            data["contents"].append("\n".join(rows))
+                            data["aligns"].append("")
+                            data["indents_left"].append("0")
+                            data["indents_first_line"].append("0")
+                            data["line_spacings"].append("1.5")
+                            data["paths"].append("")
+                            data["captions"].append("")
+                            data["font_faces"].append("")
+                            data["font_sizes"].append("")
+                            data["col_widths"] = elem.get("col_widths", "2,1,2")
+                        elif elem.tag == "list":
+                            items = [item.text or "" for item in elem.findall("item")]
+                            data["blocks"][-1] = f"{elem.get('type', 'bullet')}_list"
+                            data["contents"].append("\n".join(items))
+                            data["aligns"].append("")
+                            data["indents_left"].append("0")
+                            data["indents_first_line"].append("0")
+                            data["line_spacings"].append("1.5")
+                            data["paths"].append("")
+                            data["captions"].append("")
+                            data["font_faces"].append("")
+                            data["font_sizes"].append("")
+                        elif elem.tag == "image":
+                            data["contents"].append("")
+                            data["aligns"].append("")
+                            data["indents_left"].append("0")
+                            data["indents_first_line"].append("0")
+                            data["line_spacings"].append("1.5")
+                            image_path = elem.get("path", "")
+                            data["paths"].append(f"/uploads/{os.path.basename(image_path)}" if image_path else "")
+                            data["captions"].append(elem.get("caption", ""))
+                            data["font_faces"].append("")
+                            data["font_sizes"].append("")
 
-    if document['template_id']:
-        cur.execute('SELECT default_font_face, default_font_size, default_indent_left, default_indent_first_line, default_line_spacing FROM templates WHERE id = %s', (document['template_id'],))
-        template = cur.fetchone()
-        data.update({
-            "default_font_face": template['default_font_face'],
-            "default_font_size": template['default_font_size'],
-            "default_indent_left": template['default_indent_left'],
-            "default_indent_first_line": template['default_indent_first_line'],
-            "default_line_spacing": template['default_line_spacing']
-        })
+            if document['template_id']:
+                cur.execute('SELECT default_font_face, default_font_size, default_indent_left, default_indent_first_line, default_line_spacing FROM templates WHERE id = %s', (document['template_id'],))
+                template = cur.fetchone()
+                if template:
+                    data.update({
+                        "default_font_face": template['default_font_face'],
+                        "default_font_size": template['default_font_size'],
+                        "default_indent_left": template['default_indent_left'],
+                        "default_indent_first_line": template['default_indent_first_line'],
+                        "default_line_spacing": template['default_line_spacing']
+                    })
 
-    conn.close()
-    return data
+    return jsonify(data)
 
 def generate_preview(docx_path):
     preview_filename = f"preview_{os.path.basename(docx_path).replace('.docx', '.png')}"
     preview_path = os.path.join(PREVIEW_DIR, preview_filename)
-    pdf_path = f"/tmp/{os.path.basename(docx_path).replace('.docx', '.pdf')}"
-    
-    env = os.environ.copy()
-    env["PATH"] = f"{env.get('PATH', '')}:/bin:/usr/bin"
-    
-    # Шаг 1: Конвертация .docx в PDF через soffice
-    result = subprocess.run(
-        ['/usr/bin/soffice', '--headless', '--convert-to', 'pdf', '--outdir', '/tmp', docx_path],
-        check=True,
-        env=env,
-        capture_output=True,
-        text=True
-    )
-    print(f"soffice output: {result.stdout}")
-    print(f"soffice errors: {result.stderr}")
-    
-    # Проверка, что PDF существует
-    if not os.path.exists(pdf_path):
-        print(f"PDF not found: {pdf_path}")
-        return None
-    
-    # Шаг 2: Конвертация PDF в PNG через convert
+    pdf_path = os.path.join('/tmp', f"{os.path.basename(docx_path).replace('.docx', '.pdf')}")
+
     try:
-        result = subprocess.run(
-            ['/usr/bin/convert', f"{pdf_path}[0]", preview_path],
-            check=True,
-            capture_output=True,
-            text=True
+        subprocess.run(
+            ['soffice', '--headless', '--convert-to', 'pdf', '--outdir', '/tmp', docx_path],
+            check=True, capture_output=True, text=True
         )
-        print(f"convert output: {result.stdout}")
-        print(f"convert errors: {result.stderr}")
+        subprocess.run(
+            ['convert', f"{pdf_path}[0]", preview_path],
+            check=True, capture_output=True, text=True
+        )
+        os.remove(pdf_path)
+        return f"previews/{preview_filename}"
     except subprocess.CalledProcessError as e:
-        print(f"convert failed with exit code {e.returncode}")
-        print(f"convert stdout: {e.stdout}")
-        print(f"convert stderr: {e.stderr}")
+        print(f"Ошибка генерации предпросмотра: {e.stderr}")
         if os.path.exists(pdf_path):
             os.remove(pdf_path)
         return None
-    
-    # Удаление временного PDF
-    if os.path.exists(pdf_path):
-        os.remove(pdf_path)
-    
-    return f"previews/{preview_filename}"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5724, debug=True)

@@ -1,23 +1,35 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
+    <meta prawn="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="header">
         <h1>Регистрация</h1>
     </header>
     <div class="container">
-        <form method="POST">
-            <label>Логин: <input type="text" name="username" required></label>
-            <label>Email: <input type="email" name="email" required></label>
-            <label>Пароль: <input type="password" name="password" required></label>
-            <button type="submit">Зарегистрироваться</button>
-        </form>
-        <p><a href="{{ url_for('login') }}">Войти</a></p>
+        <main class="document">
+            <form method="POST">
+                <label>Логин: 
+                    <input type="text" name="username" required>
+                </label>
+                <label>Email: 
+                    <input type="email" name="email" required>
+                </label>
+                <label>Пароль: 
+                    <input type="password" name="password" required>
+                </label>
+                <button type="submit" class="generate-btn">Зарегистрироваться</button>
+            </form>
+            <p><a href="{{ url_for('login') }}" class="back-btn">Войти</a></p>
+        </main>
     </div>
+    <footer class="footer">
+        <p>© 2025 Генератор документов</p>
+    </footer>
 </body>
 </html>

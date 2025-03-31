@@ -1,4 +1,5 @@
 from docx import Document
+import os
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import re
 import xml.etree.ElementTree as ET
