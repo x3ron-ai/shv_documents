@@ -1,6 +1,7 @@
 import os
 import random
 import string
+import subprocess
 from flask import Flask, render_template, request, redirect, url_for, send_file, make_response
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -12,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'ебаный_случай_2025'
+app.secret_key = 'случай_2025'
 
 DB_CONFIG = {
     'dbname': os.getenv('DB_NAME'),
@@ -24,14 +25,8 @@ DB_CONFIG = {
 
 UPLOADS_DIR = 'uploads'
 DOCUMENTS_DIR = 'documents'
-PREVIEW_DIR = 'static/previews'  # Изменили на static/previews
+PREVIEW_DIR = 'static/previews'
 TEMP_DOCX = 'temp.docx'
-
-def generate_preview(docx_path):
-    preview_path = os.path.join(PREVIEW_DIR, f"preview_{os.path.basename(docx_path).replace('.docx', '.png')}")
-    os.system(f"convert {docx_path}[0] {preview_path}")
-    return preview_path
-
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 os.makedirs(DOCUMENTS_DIR, exist_ok=True)
 os.makedirs(PREVIEW_DIR, exist_ok=True)
@@ -77,7 +72,7 @@ def login():
             conn.close()
             return resp
         conn.close()
-        return 'Неверный логин или пароль, пиздец тебе'
+        return 'Неверный логин или пароль'
     templates = get_all_templates()
     return render_template('login.html', templates=templates)
 
@@ -96,7 +91,7 @@ def register():
             return redirect(url_for('login'))
         except psycopg2.IntegrityError:
             conn.rollback()
-            return 'Такой юзер уже есть, пиздец'
+            return 'Такой юзер уже есть'
         finally:
             conn.close()
     return render_template('register.html')
@@ -143,7 +138,7 @@ def create():
     if request.method == 'POST':
         template_id = request.form.get('template_id')
         title = request.form['title']
-        xml_path = f"{DOCUMENTS_DIR}/{user['id']}_{title.replace(' ', '_')}.xml"  # Изменили TEMPLATES_DIR на DOCUMENTS_DIR
+        xml_path = f"{DOCUMENTS_DIR}/{user['id']}_{title.replace(' ', '_')}.xml"
         conn = get_db_connection()
         cur = conn.cursor()
         cur.execute('INSERT INTO documents (owner_id, template_id, title, xml_path) VALUES (%s, %s, %s, %s) RETURNING id',
@@ -166,7 +161,7 @@ def edit_document(doc_id):
     document = cur.fetchone()
     if not document:
         conn.close()
-        return 'Документ не найден или не твой, пиздец', 403
+        return 'Документ не найден или не твой, ', 403
 
     if request.method == 'POST':
         blocks = request.form.getlist('block_type[]')
@@ -279,18 +274,18 @@ def create_template():
         title_page.save(title_page_path)
         preview_path = generate_preview(title_page_path)
 
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('INSERT INTO templates (author_id, title, title_page_path, preview_path, default_font_face, default_font_size, default_indent_left, default_indent_first_line, default_line_spacing) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                    (user['id'], title, title_page_path, preview_path, font_face, font_size, indent_left, indent_first_line, line_spacing))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('index'))
-    return render_template('create_template.html')
+        if preview_path:  # Проверяем, что предпросмотр успешно создан
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute('INSERT INTO templates (author_id, title, title_page_path, preview_path, default_font_face, default_font_size, default_indent_left, default_indent_first_line, default_line_spacing) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                        (user['id'], title, title_page_path, preview_path, font_face, font_size, indent_left, indent_first_line, line_spacing))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('index'))
+        else:
+            return "Ошибка при создании предпросмотра, ", 500
 
-@app.route('/previews/<path:filename>')
-def serve_previews(filename):
-    return send_file(os.path.join(PREVIEW_DIR, filename))
+    return render_template('create_template.html')
 
 @app.route('/get_template/<int:doc_id>')
 def get_template(doc_id):
@@ -382,9 +377,52 @@ def get_template(doc_id):
     return data
 
 def generate_preview(docx_path):
-    preview_path = os.path.join(PREVIEW_DIR, f"preview_{os.path.basename(docx_path).replace('.docx', '.png')}")
-    os.system(f"convert {docx_path}[0] {preview_path}")
-    return preview_path
+    preview_filename = f"preview_{os.path.basename(docx_path).replace('.docx', '.png')}"
+    preview_path = os.path.join(PREVIEW_DIR, preview_filename)
+    pdf_path = f"/tmp/{os.path.basename(docx_path).replace('.docx', '.pdf')}"
+    
+    env = os.environ.copy()
+    env["PATH"] = f"{env.get('PATH', '')}:/bin:/usr/bin"
+    
+    # Шаг 1: Конвертация .docx в PDF через soffice
+    result = subprocess.run(
+        ['/usr/bin/soffice', '--headless', '--convert-to', 'pdf', '--outdir', '/tmp', docx_path],
+        check=True,
+        env=env,
+        capture_output=True,
+        text=True
+    )
+    print(f"soffice output: {result.stdout}")
+    print(f"soffice errors: {result.stderr}")
+    
+    # Проверка, что PDF существует
+    if not os.path.exists(pdf_path):
+        print(f"PDF not found: {pdf_path}")
+        return None
+    
+    # Шаг 2: Конвертация PDF в PNG через convert
+    try:
+        result = subprocess.run(
+            ['/usr/bin/convert', f"{pdf_path}[0]", preview_path],
+            check=True,
+            capture_output=True,
+            text=True
+        )
+        print(f"convert output: {result.stdout}")
+        print(f"convert errors: {result.stderr}")
+    except subprocess.CalledProcessError as e:
+        print(f"convert failed with exit code {e.returncode}")
+        print(f"convert stdout: {e.stdout}")
+        print(f"convert stderr: {e.stderr}")
+        if os.path.exists(pdf_path):
+            os.remove(pdf_path)
+        return None
+    
+    # Удаление временного PDF
+    if os.path.exists(pdf_path):
+        os.remove(pdf_path)
+    
+    return f"previews/{preview_filename}"
 
 if __name__ == '__main__':
     app.run(debug=True)

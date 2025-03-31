@@ -6,8 +6,8 @@ After=network.target
 User=x3ron
 Group=www-data
 WorkingDirectory=/home/x3ron/diplom
-Environment="PATH=/home/x3ron/diplom/env/bin"
-ExecStart=/home/x3ron/diplom/env/bin/gunicorn --workers 3 --bind unix:docs.sock -m 007 --access-logfile '-' --error-logfile '-' --log-level info wsgi:app
+Environment="PATH=/bin:/usr/bin:/home/x3ron/diplom/env/bin"
+ExecStart=/home/x3ron/diplom/env/bin/gunicorn --workers 3 --bind unix:docs.sock -m 007 --access-logfile - --error-logfile - --log-level info wsgi:app
 
 [Install]
 WantedBy=multi-user.target
