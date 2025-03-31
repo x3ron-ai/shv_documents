@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <h1>Вход</h1>
+    </header>
+    <div class="container">
+        <form method="POST">
+            <label>Логин: <input type="text" name="username" required></label>
+            <label>Пароль: <input type="password" name="password" required></label>
+            <button type="submit">Войти</button>
+        </form>
+        <p><a href="{{ url_for('register') }}">Зарегистрироваться</a></p>
+        <h2>Предпросмотр шаблона</h2>
+        <select onchange="document.getElementById('preview').src = this.value ? this.value : '';">
+            <option value="">Без шаблона</option>
+            {% for template in templates %}
+                <option value="{{ url_for('static', filename=template.preview_path) }}">{{ template.title }}</option>
+            {% endfor %}
+        </select>
+        <img id="preview" src="" style="max-width: 300px; display: block; margin-top: 10px;">
+    </div>
+</body>
+</html>

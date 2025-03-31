@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Генератор Word-документов</title>
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои документы</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-	<header class="header">
-		<h1>Генератор Word-документов</h1>
-	</header>
-	<div class="container">
-		<main class="document" id="document">
-			<h2>Список шаблонов</h2>
-			<a href="{{ url_for('create_document') }}" class="create-btn">Создать новый шаблон</a>
-			<ul class="document-list">
-				{% for template in templates %}
-					<li><a href="{{ url_for('edit_document', template_id=template.split('.')[0]) }}">{{ template }}</a></li>
-				{% endfor %}
-			</ul>
-		</main>
-	</div>
-	<footer class="footer">
-		<p>&copy; 2025 шавухин мпт.нет есличо</p>
-	</footer>
-	<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <header class="header">
+        <h1>Мои документы</h1>
+        <p>Добро пожаловать, {{ user.username }}! <a href="{{ url_for('logout') }}">Выйти</a></p>
+    </header>
+    <div class="container">
+        <h2>Список документов</h2>
+        <ul>
+            {% for doc in documents %}
+                <li><a href="{{ url_for('edit_document', doc_id=doc.id) }}">{{ doc.title }}</a> (Создан: {{ doc.created_at }})</li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('create') }}" class="create-btn">Создать новый документ</a>
+        <h2>Доступные шаблоны</h2>
+        <ul>
+            {% for template in templates %}
+                <li>{{ template.title }} <img src="/{{ template.preview_path }}" style="max-width: 100px;"></li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('create_template') }}" class="create-btn">Создать новый шаблон</a>
+    </div>
 </body>
 </html>
