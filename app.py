@@ -148,9 +148,6 @@ def edit_document(template_id):
         line_spacing = request.form.get('line_spacing', '1.5')
 
         root = ET.Element("root")
-        root.set("indent_left", indent_left)
-        root.set("indent_first_line", indent_first_line)
-        root.set("line_spacing", line_spacing)
         
         content_idx = 0
         image_idx = 0
@@ -160,6 +157,13 @@ def edit_document(template_id):
                 text_elem = ET.SubElement(root, "text")
                 text_elem.text = contents[content_idx]
                 text_elem.set("align", aligns[content_idx] if content_idx < len(aligns) else "left")
+                text_elem.set("indent_left", indent_left)
+                text_elem.set("indent_first_line", indent_first_line)
+                text_elem.set("line_spacing", line_spacing)
+                font_face = request.form.get(f'face_block_{content_idx}', 'Times New Roman')
+                text_elem.set("font_face", font_face)
+                font_size = request.form.get(f'size_block_{content_idx}', '14')  # Новый атрибут
+                text_elem.set("font_size", font_size)
                 content_idx += 1
             elif block == "table" and content_idx < len(contents):
                 table_elem = ET.SubElement(root, "table")
@@ -176,6 +180,9 @@ def edit_document(template_id):
             elif block in ["numbered_list", "bullet_list"] and content_idx < len(contents):
                 list_elem = ET.SubElement(root, "list")
                 list_elem.set("type", "numbered" if block == "numbered_list" else "bullet")
+                list_elem.set("indent_left", indent_left)
+                list_elem.set("indent_first_line", indent_first_line)
+                list_elem.set("line_spacing", line_spacing)
                 items = contents[content_idx].split('\n')
                 for item in items:
                     if item.strip():
@@ -236,10 +243,12 @@ def get_template(template_id):
         "aligns": [],
         "paths": [],
         "captions": [],
-        "indent_left": root.get("indent_left", "0"),
-        "indent_first_line": root.get("indent_first_line", "0"),
-        "line_spacing": root.get("line_spacing", "1.5"),
-        "col_widths": "2,1,2"  # Дефолтное значение для таблиц
+        "indents_left": [],
+        "indents_first_line": [],
+        "line_spacings": [],
+        "font_faces": [],
+        "font_sizes": [],
+        "col_widths": "2,1,2"
     }
     
     for elem in root:
@@ -249,24 +258,43 @@ def get_template(template_id):
             data["aligns"].append(elem.get("align", "left"))
             data["paths"].append("")
             data["captions"].append("")
+            data["indents_left"].append(elem.get("indent_left", "0"))
+            data["indents_first_line"].append(elem.get("indent_first_line", "0"))
+            data["line_spacings"].append(elem.get("line_spacing", "1.5"))
+            data["font_faces"].append(elem.get("font_face", "Times New Roman"))
+            data["font_sizes"].append(elem.get("font_size", "14"))
         elif elem.tag == "table":
             rows = [",".join(cell.text or "" for cell in row.findall("cell")) for row in elem.findall("row")]
             data["contents"].append("\n".join(rows))
             data["aligns"].append("")
             data["paths"].append("")
             data["captions"].append("")
-            data["col_widths"] = elem.get("col_widths", "2,1,2")
+            data["indents_left"].append("0")
+            data["indents_first_line"].append("0")
+            data["line_spacings"].append("1.5")
+            data["font_faces"].append("")
+            data["font_sizes"].append("")
         elif elem.tag in ["numbered_list", "bullet_list"]:
             items = [item.text or "" for item in elem.findall("item")]
             data["contents"].append("\n".join(items))
             data["aligns"].append("")
             data["paths"].append("")
             data["captions"].append("")
+            data["indents_left"].append(elem.get("indent_left", "0"))
+            data["indents_first_line"].append(elem.get("indent_first_line", "0"))
+            data["line_spacings"].append(elem.get("line_spacing", "1.5"))
+            data["font_faces"].append("")
+            data["font_sizes"].append("")
         elif elem.tag == "image":
             data["contents"].append("")
             data["aligns"].append("")
             data["paths"].append(elem.get("path", ""))
             data["captions"].append(elem.get("caption", ""))
+            data["indents_left"].append("0")
+            data["indents_first_line"].append("0")
+            data["line_spacings"].append("1.5")
+            data["font_faces"].append("")
+            data["font_sizes"].append("")
 
     return data
 

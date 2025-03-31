@@ -12,7 +12,7 @@
         <h1>Редактирование шаблона {{ template_id }}</h1>
     </header>
     <div class="container">
-        <main class="document" id="document">
+        <main class="document" id="document" data-template-id="{{ template_id }}">
             <h2>Редактировать шаблон</h2>
             <form method="POST" id="docForm" enctype="multipart/form-data">
                 <div class="upload-section">
@@ -44,39 +44,5 @@
         <p>шавухин мпт.нет есличо</p>
     </footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-	<script>
-	    const templateId = "{{ template_id }}";
-	    fetch('/get_template/' + templateId)
-	        .then(response => response.json())
-	        .then(data => {
-	            document.querySelector('input[name="indent_left"]').value = data.indent_left || "0";
-	            document.querySelector('input[name="indent_first_line"]').value = data.indent_first_line || "0";
-	            document.querySelector('input[name="line_spacing"]').value = data.line_spacing || "1.5";
-
-	            data.blocks.forEach((type, index) => {
-	                addBlock(type);
-	                const block = document.getElementById(`block_${blockCount - 1}`);
-	                if (type === "text") {
-	                    block.querySelector('.contenteditable').innerHTML = data.contents[index];
-	                    block.querySelector(`#content_${block.id}`).value = data.contents[index];
-	                    block.querySelector(`#align_${block.id}`).value = data.aligns[index];
-	                    block.querySelector(`select[onchange*="align"]`).value = data.aligns[index];
-	                } else if (type === "table") {
-	                    block.querySelector('textarea').value = data.contents[index];
-	                    block.querySelector('input[name="col_widths"]').value = data.col_widths;
-	                } else if (type === "numbered_list" || type === "bullet_list") {
-	                    block.querySelector('textarea').value = data.contents[index];
-	                } else if (type === "image") {
-	                    block.querySelector(`#caption_${block.id}`).value = data.captions[index];
-	                    if (data.paths[index]) {
-	                        block.querySelector(`#preview_${block.id}`).src = '/' + data.paths[index];
-	                        block.querySelector(`#preview_${block.id}`).style.display = "block";
-	                        block.querySelector(`#image_path_${block.id}`).value = data.paths[index];
-	                    }
-	                }
-	            });
-	        })
-	        .catch(error => console.error('Ошибка загрузки шаблона:', error));
-	</script>
 </body>
 </html>

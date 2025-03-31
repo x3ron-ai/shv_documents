@@ -55,6 +55,8 @@ function addBlock(type) {
             <div class="contenteditable" contenteditable="true" style="font-family: 'Times New Roman'; font-size: 14px;"></div>
             <input type="hidden" name="content[]" id="content_${block.id}">
             <input type="hidden" name="align[]" value="left" id="align_${block.id}">
+            <input type="hidden" name="face_block_${blockCount - 1}" id="face_${block.id}" value="Times New Roman">
+            <input type="hidden" name="size_block_${blockCount - 1}" id="size_${block.id}" value="14">
             <div class="style-menu">
                 <label>Жирный: <input type="checkbox" onchange="updateStyle('${block.id}', 'bold', this.checked); saveTemplate()"></label>
                 <label>Размер: <input type="number" min="8" max="72" value="14" onchange="updateStyle('${block.id}', 'size', this.value); saveTemplate()"></label>
@@ -130,8 +132,10 @@ function updateStyle(blockId, property, value) {
         editable.style.fontWeight = value ? 'bold' : 'normal';
     } else if (property === 'size') {
         editable.style.fontSize = `${value}px`;
+        block.querySelector(`#size_${blockId}`).value = value;
     } else if (property === 'face') {
         editable.style.fontFamily = value;
+        block.querySelector(`#face_${blockId}`).value = value;
     } else if (property === 'color') {
         editable.style.color = `#${value}`;
     } else if (property === 'align') {
@@ -187,3 +191,63 @@ dropZone.ondrop = drop;
 document.querySelectorAll('.indent-options input').forEach(input => {
     input.addEventListener('input', saveTemplate);
 });
+
+// Логика загрузки шаблона
+const templateId = document.getElementById('document').getAttribute('data-template-id');
+if (templateId) {
+    fetch('/get_template/' + templateId)
+        .then(response => response.json())
+        .then(data => {
+            const firstTextIndex = data.blocks.indexOf("text") !== -1 ? data.blocks.indexOf("text") : 0;
+            document.querySelector('input[name="indent_left"]').value = data.indents_left[firstTextIndex] || "0";
+            document.querySelector('input[name="indent_first_line"]').value = data.indents_first_line[firstTextIndex] || "0";
+            document.querySelector('input[name="line_spacing"]').value = data.line_spacings[firstTextIndex] || "1.5";
+
+            data.blocks.forEach((type, index) => {
+                addBlock(type);
+                const block = document.getElementById(`block_${blockCount - 1}`);
+                if (type === "text") {
+                    block.querySelector('.contenteditable').innerHTML = data.contents[index];
+                    block.querySelector(`#content_${block.id}`).value = data.contents[index];
+                    block.querySelector(`#align_${block.id}`).value = data.aligns[index];
+                    const alignSelect = block.querySelector(`select[onchange*="align"]`);
+                    if (alignSelect) {
+                        alignSelect.value = data.aligns[index];
+                    }
+                    const fontFace = data.font_faces && data.font_faces[index] ? data.font_faces[index] : "Times New Roman";
+                    const faceInput = block.querySelector(`#face_${block.id}`);
+                    if (faceInput) {
+                        faceInput.value = fontFace;
+                    }
+                    block.querySelector('.contenteditable').style.fontFamily = fontFace;
+                    const faceSelect = block.querySelector(`select[onchange*="face"]`);
+                    if (faceSelect) {
+                        faceSelect.value = fontFace;
+                    }
+                    const fontSize = data.font_sizes && data.font_sizes[index] ? data.font_sizes[index] : "14";
+                    const sizeInput = block.querySelector(`#size_${block.id}`);
+                    if (sizeInput) {
+                        sizeInput.value = fontSize;
+                    }
+                    block.querySelector('.contenteditable').style.fontSize = `${fontSize}px`;
+                    const sizeInputField = block.querySelector(`input[onchange*="size"]`);
+                    if (sizeInputField) {
+                        sizeInputField.value = fontSize;
+                    }
+                } else if (type === "table") {
+                    block.querySelector('textarea').value = data.contents[index];
+                    block.querySelector('input[name="col_widths"]').value = data.col_widths;
+                } else if (type === "numbered_list" || type === "bullet_list") {
+                    block.querySelector('textarea').value = data.contents[index];
+                } else if (type === "image") {
+                    block.querySelector(`#caption_${block.id}`).value = data.captions[index];
+                    if (data.paths[index]) {
+                        block.querySelector(`#preview_${block.id}`).src = '/' + data.paths[index];
+                        block.querySelector(`#preview_${block.id}`).style.display = "block";
+                        block.querySelector(`#image_path_${block.id}`).value = data.paths[index];
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Ошибка загрузки шаблона:', error));
+}
