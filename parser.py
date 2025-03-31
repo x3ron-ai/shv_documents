@@ -44,50 +44,50 @@ class XMLToWordParser:
 			self._add_image(element)
 	
 	def _add_text(self, text_element):
-	    text = text_element.text.strip() if text_element.text else ""
-	    alignment = text_element.get("align", "left")
-	    indent_left_cm = float(text_element.get("indent_left", "0"))
-	    indent_first_line_cm = float(text_element.get("indent_first_line", "0"))
-	    line_spacing = float(text_element.get("line_spacing", "1.5"))
-	    font_face = text_element.get("font_face", "Times New Roman")
-	    font_size = int(text_element.get("font_size", "14"))  # Используем атрибут
-	    indent_left = indent_left_cm * 0.393701
-	    indent_first_line = indent_first_line_cm * 0.393701
-	    
-	    if text:
-	        paragraph = self.doc.add_paragraph(
-	            "", 
-	            alignment=alignment, 
-	            indent_left=indent_left, 
-	            indent_first_line=indent_first_line, 
-	            line_spacing=line_spacing
-	        )
-	        parts = re.split(r'(<[^>]+>)', text)
-	        bold = False
-	        font_color = (0, 0, 0)
+		text = text_element.text.strip() if text_element.text else ""
+		alignment = text_element.get("align", "left")
+		indent_left_cm = float(text_element.get("indent_left", "0"))
+		indent_first_line_cm = float(text_element.get("indent_first_line", "0"))
+		line_spacing = float(text_element.get("line_spacing", "1.5"))
+		font_face = text_element.get("font_face", "Times New Roman")
+		font_size = int(text_element.get("font_size", "14"))  # Используем атрибут
+		indent_left = indent_left_cm * 0.393701
+		indent_first_line = indent_first_line_cm * 0.393701
+		
+		if text:
+			paragraph = self.doc.add_paragraph(
+				"", 
+				alignment=alignment, 
+				indent_left=indent_left, 
+				indent_first_line=indent_first_line, 
+				line_spacing=line_spacing
+			)
+			parts = re.split(r'(<[^>]+>)', text)
+			bold = False
+			font_color = (0, 0, 0)
 
-	        for part in parts:
-	            if part.startswith('<') and part.endswith('>'):
-	                if part == '<b>':
-	                    bold = True
-	                elif part == '</b>':
-	                    bold = False
-	                elif part.startswith('<font'):  # Для совместимости со старыми шаблонами
-	                    attrs = re.findall(r'(\w+)="([^"]+)"', part)
-	                    for attr, value in attrs:
-	                        if attr == "size":  # Переопределяем, если есть тег
-	                            font_size = int(value)
-	                        elif attr == "color":
-	                            font_color = tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
-	                elif part == '</font>':
-	                    font_color = (0, 0, 0)
-	            else:
-	                if part.strip():
-	                    current_run = paragraph.add_run(part)
-	                    current_run.font.bold = bold
-	                    current_run.font.size = Pt(font_size)  # Применяем размер
-	                    current_run.font.name = font_face
-	                    current_run.font.color.rgb = RGBColor(*font_color)
+			for part in parts:
+				if part.startswith('<') and part.endswith('>'):
+					if part == '<b>':
+						bold = True
+					elif part == '</b>':
+						bold = False
+					elif part.startswith('<font'):  # Для совместимости со старыми шаблонами
+						attrs = re.findall(r'(\w+)="([^"]+)"', part)
+						for attr, value in attrs:
+							if attr == "size":  # Переопределяем, если есть тег
+								font_size = int(value)
+							elif attr == "color":
+								font_color = tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
+					elif part == '</font>':
+						font_color = (0, 0, 0)
+				else:
+					if part.strip():
+						current_run = paragraph.add_run(part)
+						current_run.font.bold = bold
+						current_run.font.size = Pt(font_size)  # Применяем размер
+						current_run.font.name = font_face
+						current_run.font.color.rgb = RGBColor(*font_color)
 	
 	def _add_table(self, table_element):
 		rows = []
