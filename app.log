@@ -1,0 +1,9 @@
+2025-03-31 13:02:11,791 INFO: Создание шаблона: title=12312312313223, title_page=титульный.docx
+2025-03-31 13:02:11,797 INFO: Файл титульной страницы сохранён: uploads/template_1_12312312313223_5154.docx
+2025-03-31 13:02:11,797 INFO: Генерация PDF из uploads/template_1_12312312313223_5154.docx в static/previews/uploads/template_1_12312312313223_5154.pdf
+2025-03-31 13:02:13,200 INFO: PDF успешно создан: convert /home/x3ron/diplom/uploads/template_1_12312312313223_5154.docx -> /home/x3ron/diplom/static/previews/template_1_12312312313223_5154.pdf using filter : writer_pdf_Export
+
+2025-03-31 13:02:13,201 INFO: Конвертация PDF static/previews/uploads/template_1_12312312313223_5154.pdf в PNG static/previews/preview_uploads/template_1_12312312313223_5154.png
+2025-03-31 13:02:13,222 ERROR: Ошибка генерации предпросмотра: I/O Error: Couldn't open file 'static/previews/uploads/template_1_12312312313223_5154.pdf': No such file or directory.
+
+2025-03-31 13:02:13,222 ERROR: Не удалось создать предпросмотр для шаблона '12312312313223'

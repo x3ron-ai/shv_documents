@@ -1,3 +1,4 @@
+# окак!!
 import os
 import random
 import string
@@ -9,11 +10,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import xml.etree.ElementTree as ET
 from parser import XMLToWordParser
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = 'случай_2025'
+
+# Настройка логирования
+logging.basicConfig(level=logging.INFO, filename='app.log', format='%(asctime)s %(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
 
 DB_CONFIG = {
     'dbname': os.getenv('DB_NAME'),
@@ -26,7 +32,9 @@ DB_CONFIG = {
 UPLOADS_DIR = 'uploads'
 DOCUMENTS_DIR = 'documents'
 PREVIEW_DIR = 'static/previews'
-TEMP_DOCX = 'temp.docx'
+TEMP_DOCX = 'temp.doc'
+TEMP_DIR= 'static/previews'
+
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 os.makedirs(DOCUMENTS_DIR, exist_ok=True)
 os.makedirs(PREVIEW_DIR, exist_ok=True)
@@ -271,21 +279,30 @@ def create_template():
         indent_first_line = request.form.get('indent_first_line', '0')
         line_spacing = request.form.get('line_spacing', '1.5')
 
+        logger.info(f"Создание шаблона: title={title}, title_page={title_page.filename if title_page else None}")
+
         if not title or not title_page or not title_page.filename:
+            logger.warning("Не заполнены обязательные поля")
             return render_template('create_template.html', error='Заполните все обязательные поля')
 
-        title_page_path = os.path.join(UPLOADS_DIR, f"template_{user['id']}_{title.replace(' ', '_')}_{random.randint(1000, 9999)}.docx")
+        safe_title = ''.join(c for c in title if c.isalnum() or c in ' _-')  # Убираем опасные символы
+        title_page_path = os.path.join(UPLOADS_DIR, f"template_{user['id']}_{safe_title}_{random.randint(1000, 9999)}.docx")
         title_page.save(title_page_path)
-        preview_path = generate_preview(title_page_path)
+        logger.info(f"Файл титульной страницы сохранён: {title_page_path}")
 
+        preview_path = generate_preview(title_page_path)
         if preview_path:
             with get_db_connection() as conn:
                 with conn.cursor() as cur:
-                    cur.execute('INSERT INTO templates (author_id, title, title_page_path, preview_path, default_font_face, default_font_size, default_indent_left, default_indent_first_line, default_line_spacing) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                                (user['id'], title, title_page_path, preview_path, font_face, font_size, indent_left, indent_first_line, line_spacing))
+                    cur.execute(
+                        'INSERT INTO templates (author_id, title, title_page_path, preview_path, default_font_face, default_font_size, default_indent_left, default_indent_first_line, default_line_spacing) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                        (user['id'], title, title_page_path, preview_path, font_face, font_size, indent_left, indent_first_line, line_spacing)
+                    )
                     conn.commit()
+            logger.info(f"Шаблон '{title}' успешно добавлен в базу данных")
             return redirect(url_for('index'))
-        return render_template('create_template.html', error='Ошибка при создании предпросмотра')
+        logger.error(f"Не удалось создать предпросмотр для шаблона '{title}'")
+        return render_template('create_template.html', error='Не удалось создать предпросмотр шаблона. Проверьте файл и попробуйте снова.')
     return render_template('create_template.html', error=None)
 
 @app.route('/get_template/<int:doc_id>')
@@ -380,25 +397,42 @@ def get_template(doc_id):
     return jsonify(data)
 
 def generate_preview(docx_path):
-    preview_filename = f"preview_{os.path.basename(docx_path).replace('.docx', '.png')}"
-    preview_path = os.path.join(PREVIEW_DIR, preview_filename)
-    pdf_path = os.path.join('/tmp', f"{os.path.basename(docx_path).replace('.docx', '.pdf')}")
+    # Безопасное имя файла
+    safe_filename = docx_path
+    preview_filename = f"preview_{safe_filename.replace('.docx', '.png')}"
+    preview_path = preview_filename
+    pdf_path = os.path.join(TEMP_DIR, f"{safe_filename.replace('.docx', '.pdf')}")
 
     try:
-        subprocess.run(
-            ['soffice', '--headless', '--convert-to', 'pdf', '--outdir', '/tmp', docx_path],
+        # Генерация PDF из DOCX
+        logger.info(f"Генерация PDF из {docx_path} в {pdf_path}")
+        result = subprocess.run(
+            ['soffice', '--headless', '--convert-to', 'pdf', '--outdir', TEMP_DIR, docx_path],
             check=True, capture_output=True, text=True
         )
-        subprocess.run(
-            ['convert', f"{pdf_path}[0]", preview_path],
+        logger.info(f"PDF успешно создан: {result.stdout}")
+    except:
+        logger.info(f"gg")
+    try:
+        # Конвертация PDF в PNG
+        logger.info(f"Конвертация PDF {pdf_path} в PNG {preview_path}")
+        result = subprocess.run(
+            ['pdftoppm', pdf_path, preview_path.replace('.png', ''), '-png'],
             check=True, capture_output=True, text=True
         )
+        logger.info(f"PNG успешно создан: {result.stdout}")
+
+        # Удаляем временный PDF файл
         os.remove(pdf_path)
+        
         return f"previews/{preview_filename}"
     except subprocess.CalledProcessError as e:
-        print(f"Ошибка генерации предпросмотра: {e.stderr}")
+        logger.error(f"Ошибка генерации предпросмотра: {e.stderr}")
         if os.path.exists(pdf_path):
             os.remove(pdf_path)
+        return None
+    except Exception as e:
+        logger.error(f"Неизвестная ошибка при генерации предпросмотра: {str(e)}")
         return None
 
 if __name__ == '__main__':

@@ -1,0 +1,5 @@
+2025-03-31 12:52:50,949 INFO: Генерация PDF из /home/x3ron/diplom/uploads/template_1_123123_2943.docx в /home/x3ron/diplom/uploads/template_1_123123_2943.pdf
+2025-03-31 12:52:52,433 INFO: PDF успешно создан: convert /home/x3ron/diplom/uploads/template_1_123123_2943.docx -> /home/x3ron/diplom/uploads/template_1_123123_2943.pdf using filter : writer_pdf_Export
+
+2025-03-31 12:52:52,433 INFO: Конвертация PDF /home/x3ron/diplom/uploads/template_1_123123_2943.pdf в PNG static/previews/preview_/home/x3ron/diplom/uploads/template_1_123123_2943.png
+2025-03-31 12:52:52,476 INFO: PNG успешно создан: 
