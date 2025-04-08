@@ -13,6 +13,7 @@ class XMLToWordParser:
         self.xml_path = xml_path
         self.output_path = output_path
         self.title_page_path = title_page_path
+
         self.doc = Document(self.title_page_path) if self.title_page_path else Document()
         self._add_caption_style()
 
@@ -28,8 +29,10 @@ class XMLToWordParser:
 
     def parse_and_convert(self):
         try:
+
             if self.title_page_path:
                 self.doc.add_page_break()
+
 
             with open(self.xml_path, 'r', encoding='utf-8') as f:
                 root = ET.fromstring(f.read())
