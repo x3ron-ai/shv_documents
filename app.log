@@ -1430,3 +1430,898 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint '/' wit
 2025-04-08 19:23:14,838 INFO: Updating existing document: id=21, title=123
 2025-04-08 19:23:14,842 INFO: Saved XML to documents/1_123_7914.xml
 2025-04-08 19:23:14,881 INFO: Generated DOCX for document id=21
+2025-04-08 19:41:24,155 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:41:24,155 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:17,335 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:17,336 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:23,906 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:23,907 INFO: POST request received for doc_id=21
+2025-04-08 19:54:23,908 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:23,908 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:23,908 INFO: POST request received for doc_id=21
+2025-04-08 19:54:23,908 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:23,913 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:23,913 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:23,913 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:23,913 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:23,938 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:23,938 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:23,938 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:23,938 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:28,062 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:28,063 INFO: POST request received for doc_id=21
+2025-04-08 19:54:28,063 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:28,069 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:28,069 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:28,103 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:28,103 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:29,004 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:29,004 INFO: POST request received for doc_id=21
+2025-04-08 19:54:29,004 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:29,011 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:29,011 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:29,035 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:29,036 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:31,174 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:31,174 INFO: POST request received for doc_id=21
+2025-04-08 19:54:31,174 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:31,177 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:31,177 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:31,199 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:31,199 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:33,219 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:33,219 INFO: POST request received for doc_id=21
+2025-04-08 19:54:33,219 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:33,222 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:33,222 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:33,244 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:33,245 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:34,712 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:34,712 INFO: POST request received for doc_id=21
+2025-04-08 19:54:34,712 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:34,714 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:34,714 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:34,739 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:34,740 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:36,071 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:36,071 INFO: POST request received for doc_id=21
+2025-04-08 19:54:36,071 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:36,073 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:36,074 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:36,097 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:36,098 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:37,575 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:37,575 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:37,576 INFO: POST request received for doc_id=21
+2025-04-08 19:54:37,576 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:37,576 INFO: POST request received for doc_id=21
+2025-04-08 19:54:37,576 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:37,579 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:37,580 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:37,581 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:37,581 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:37,609 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:37,609 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:37,609 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:37,609 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:39,831 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:39,831 INFO: POST request received for doc_id=21
+2025-04-08 19:54:39,831 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:39,835 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:39,837 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:39,863 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:39,863 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:40,766 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:40,766 INFO: POST request received for doc_id=21
+2025-04-08 19:54:40,766 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:40,769 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:40,769 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:40,791 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:40,791 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:42,393 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:42,394 INFO: POST request received for doc_id=21
+2025-04-08 19:54:42,394 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:42,399 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:42,399 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:42,423 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:42,423 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:42,480 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:42,481 INFO: POST request received for doc_id=21
+2025-04-08 19:54:42,481 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:42,486 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:42,486 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:42,513 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:42,514 INFO: POST request received for doc_id=21
+2025-04-08 19:54:42,514 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:42,517 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:42,518 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:42,518 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:42,519 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:42,545 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:42,545 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:43,801 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:43,803 INFO: POST request received for doc_id=21
+2025-04-08 19:54:43,803 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:43,806 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:43,806 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:43,835 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:43,836 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:43,869 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:43,869 INFO: POST request received for doc_id=21
+2025-04-08 19:54:43,869 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:43,872 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:43,872 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:43,899 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:43,899 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:43,919 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:43,919 INFO: POST request received for doc_id=21
+2025-04-08 19:54:43,919 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:43,923 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:43,923 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:43,945 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:43,945 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:47,051 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:47,051 INFO: POST request received for doc_id=21
+2025-04-08 19:54:47,051 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:47,054 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:47,054 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:47,059 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:47,059 INFO: POST request received for doc_id=21
+2025-04-08 19:54:47,059 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:47,062 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:47,062 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:47,081 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:47,081 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:47,097 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:47,098 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:48,658 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:48,658 INFO: POST request received for doc_id=21
+2025-04-08 19:54:48,658 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:48,659 INFO: POST request received for doc_id=21
+2025-04-08 19:54:48,659 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:48,659 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:48,661 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:48,662 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:48,662 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:48,663 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:54:48,682 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:48,683 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:48,711 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:48,712 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:54:50,021 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:54:50,021 INFO: POST request received for doc_id=21
+2025-04-08 19:54:50,021 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:54:50,024 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:54:50,061 INFO: Generated DOCX for document id=21
+2025-04-08 19:55:17,813 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:55:17,814 INFO: POST request received for doc_id=21
+2025-04-08 19:55:17,814 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:55:17,820 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:55:17,820 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:55:17,821 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:55:17,821 INFO: POST request received for doc_id=21
+2025-04-08 19:55:17,821 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:55:17,831 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:55:17,831 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:55:17,853 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:55:17,853 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:55:17,857 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:55:17,857 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:55:19,669 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:55:19,670 INFO: POST request received for doc_id=21
+2025-04-08 19:55:19,670 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:55:19,678 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:55:19,678 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:55:19,706 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:55:19,706 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:55:20,268 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:55:20,268 INFO: POST request received for doc_id=21
+2025-04-08 19:55:20,268 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:55:20,271 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:55:20,272 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:55:20,294 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:55:20,294 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:55:20,890 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:55:20,890 INFO: POST request received for doc_id=21
+2025-04-08 19:55:20,890 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:55:20,893 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:55:20,893 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:55:20,916 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:55:20,917 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:28,922 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:28,923 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:32,528 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:32,529 INFO: POST request received for doc_id=21
+2025-04-08 20:02:32,529 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:32,534 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:32,535 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:32,558 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:32,558 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:32,817 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:32,817 INFO: POST request received for doc_id=21
+2025-04-08 20:02:32,817 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:32,819 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:32,819 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:32,842 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:32,842 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:32,963 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:32,963 INFO: POST request received for doc_id=21
+2025-04-08 20:02:32,963 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:32,966 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:32,967 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:32,994 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:32,994 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:33,095 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,095 INFO: POST request received for doc_id=21
+2025-04-08 20:02:33,096 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:33,101 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:33,101 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:33,131 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,132 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:33,230 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,230 INFO: POST request received for doc_id=21
+2025-04-08 20:02:33,230 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:33,233 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:33,233 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:33,259 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,259 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:33,361 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,361 INFO: POST request received for doc_id=21
+2025-04-08 20:02:33,361 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:33,364 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:33,364 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:33,394 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,395 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:33,488 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,488 INFO: POST request received for doc_id=21
+2025-04-08 20:02:33,488 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:33,491 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:33,491 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:33,516 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,517 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:33,622 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,622 INFO: POST request received for doc_id=21
+2025-04-08 20:02:33,622 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:33,625 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:33,625 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:33,653 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,653 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:33,766 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,766 INFO: POST request received for doc_id=21
+2025-04-08 20:02:33,766 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:33,768 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:33,769 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:33,804 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:33,804 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:35,417 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:35,417 INFO: POST request received for doc_id=21
+2025-04-08 20:02:35,417 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:35,425 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:35,426 INFO: POST request received for doc_id=21
+2025-04-08 20:02:35,426 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:35,420 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:02:35,434 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:02:35,444 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:35,444 INFO: POST request received for doc_id=21
+2025-04-08 20:02:35,444 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:35,448 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:02:37,442 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:37,443 INFO: POST request received for doc_id=21
+2025-04-08 20:02:37,443 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:37,447 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:02:38,495 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:38,495 INFO: POST request received for doc_id=21
+2025-04-08 20:02:38,495 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:38,497 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:02:39,541 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:39,541 INFO: POST request received for doc_id=21
+2025-04-08 20:02:39,541 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:39,544 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:39,544 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:39,566 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:39,566 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:39,630 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:39,630 INFO: POST request received for doc_id=21
+2025-04-08 20:02:39,630 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:39,633 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:39,634 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:39,655 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:39,655 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:39,725 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:39,725 INFO: POST request received for doc_id=21
+2025-04-08 20:02:39,725 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:39,729 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:39,729 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:39,750 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:39,750 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:39,819 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:39,819 INFO: POST request received for doc_id=21
+2025-04-08 20:02:39,819 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:39,822 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:39,822 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:39,845 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:39,846 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:40,625 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:40,625 INFO: POST request received for doc_id=21
+2025-04-08 20:02:40,626 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:40,626 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:40,626 INFO: POST request received for doc_id=21
+2025-04-08 20:02:40,627 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:40,628 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:40,628 INFO: POST request received for doc_id=21
+2025-04-08 20:02:40,628 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:40,630 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:40,631 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:40,631 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:40,631 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:40,636 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:40,636 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:40,663 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:40,663 INFO: POST request received for doc_id=21
+2025-04-08 20:02:40,664 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:40,667 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:40,668 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:40,680 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:40,680 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:40,680 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:40,681 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:40,705 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:40,706 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:40,715 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:40,715 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:41,206 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:41,207 INFO: POST request received for doc_id=21
+2025-04-08 20:02:41,207 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:41,211 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:41,211 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:41,234 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:41,235 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:47,125 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:47,125 INFO: POST request received for doc_id=21
+2025-04-08 20:02:47,125 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:47,135 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 207, in process_blocks
+    text_elem.set("indent_left", request.form.get(f'indent_left_{parent_id}[]', '0')[content_idx])
+IndexError: string index out of range
+2025-04-08 20:02:47,139 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:47,139 INFO: POST request received for doc_id=21
+2025-04-08 20:02:47,139 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:47,143 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:47,144 INFO: POST request received for doc_id=21
+2025-04-08 20:02:47,144 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:47,145 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 207, in process_blocks
+    text_elem.set("indent_left", request.form.get(f'indent_left_{parent_id}[]', '0')[content_idx])
+IndexError: string index out of range
+2025-04-08 20:02:47,149 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 207, in process_blocks
+    text_elem.set("indent_left", request.form.get(f'indent_left_{parent_id}[]', '0')[content_idx])
+IndexError: string index out of range
+2025-04-08 20:02:47,173 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:47,174 INFO: POST request received for doc_id=21
+2025-04-08 20:02:47,174 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:47,180 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 207, in process_blocks
+    text_elem.set("indent_left", request.form.get(f'indent_left_{parent_id}[]', '0')[content_idx])
+IndexError: string index out of range
+2025-04-08 20:02:49,794 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:49,794 INFO: POST request received for doc_id=21
+2025-04-08 20:02:49,795 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:49,799 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 207, in process_blocks
+    text_elem.set("indent_left", request.form.get(f'indent_left_{parent_id}[]', '0')[content_idx])
+IndexError: string index out of range
+2025-04-08 20:02:50,551 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:50,551 INFO: POST request received for doc_id=21
+2025-04-08 20:02:50,551 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:50,554 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 207, in process_blocks
+    text_elem.set("indent_left", request.form.get(f'indent_left_{parent_id}[]', '0')[content_idx])
+IndexError: string index out of range
+2025-04-08 20:02:51,028 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:51,028 INFO: POST request received for doc_id=21
+2025-04-08 20:02:51,028 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:51,031 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 207, in process_blocks
+    text_elem.set("indent_left", request.form.get(f'indent_left_{parent_id}[]', '0')[content_idx])
+IndexError: string index out of range
+2025-04-08 20:02:51,855 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:51,856 INFO: POST request received for doc_id=21
+2025-04-08 20:02:51,856 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:51,860 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:02:53,282 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,283 INFO: POST request received for doc_id=21
+2025-04-08 20:02:53,283 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:53,286 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:53,286 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:53,306 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,306 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:53,354 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,354 INFO: POST request received for doc_id=21
+2025-04-08 20:02:53,354 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:53,358 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:53,358 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:53,391 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,391 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:53,415 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,415 INFO: POST request received for doc_id=21
+2025-04-08 20:02:53,416 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:53,419 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:53,419 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:53,442 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,442 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:53,550 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,551 INFO: POST request received for doc_id=21
+2025-04-08 20:02:53,551 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:53,554 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:53,554 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:53,590 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,590 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:53,593 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,593 INFO: POST request received for doc_id=21
+2025-04-08 20:02:53,594 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:53,602 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:53,602 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:53,634 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,634 INFO: POST request received for doc_id=21
+2025-04-08 20:02:53,634 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:53,637 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:53,637 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:02:53,634 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,639 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:53,661 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,662 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:02:53,949 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:02:53,950 INFO: POST request received for doc_id=21
+2025-04-08 20:02:53,950 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:02:53,952 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:02:53,984 INFO: Generated DOCX for document id=21
+2025-04-08 20:03:03,905 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:03,906 INFO: POST request received for doc_id=21
+2025-04-08 20:03:03,906 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:03,908 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:03:03,908 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:03:03,948 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:03,949 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:06,032 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:06,032 INFO: POST request received for doc_id=21
+2025-04-08 20:03:06,032 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:06,035 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:03:06,035 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:03:06,057 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:06,057 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:07,441 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:07,441 INFO: POST request received for doc_id=21
+2025-04-08 20:03:07,442 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:07,444 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:03:07,444 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:03:07,468 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:07,469 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:07,519 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:07,519 INFO: POST request received for doc_id=21
+2025-04-08 20:03:07,523 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:07,529 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:03:07,529 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:03:07,564 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:07,565 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:07,565 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:07,565 INFO: POST request received for doc_id=21
+2025-04-08 20:03:07,566 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:07,569 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:03:07,569 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:03:07,594 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:07,594 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:08,402 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:08,403 INFO: POST request received for doc_id=21
+2025-04-08 20:03:08,403 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:08,408 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:03:08,410 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:08,410 INFO: POST request received for doc_id=21
+2025-04-08 20:03:08,410 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:08,417 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:03:08,424 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:08,424 INFO: POST request received for doc_id=21
+2025-04-08 20:03:08,424 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:08,427 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:03:09,973 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:09,974 INFO: POST request received for doc_id=21
+2025-04-08 20:03:09,974 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:09,977 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:03:10,183 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:10,183 INFO: POST request received for doc_id=21
+2025-04-08 20:03:10,184 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:10,190 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:03:10,230 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:10,230 INFO: POST request received for doc_id=21
+2025-04-08 20:03:10,230 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:10,234 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:03:10,249 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:10,250 INFO: POST request received for doc_id=21
+2025-04-08 20:03:10,250 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:10,254 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:03:11,189 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:11,190 INFO: POST request received for doc_id=21
+2025-04-08 20:03:11,190 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:11,194 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:03:11,248 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:11,248 INFO: POST request received for doc_id=21
+2025-04-08 20:03:11,248 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:11,252 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:03:11,253 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:11,253 INFO: POST request received for doc_id=21
+2025-04-08 20:03:11,253 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:11,256 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:03:11,780 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:11,781 INFO: POST request received for doc_id=21
+2025-04-08 20:03:11,781 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:11,785 ERROR: Exception on /document/21 [POST]
+Traceback (most recent call last):
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/x3ron/diplom/env/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/x3ron/diplom/app.py", line 253, in edit_document
+    process_blocks(root)
+  File "/home/x3ron/diplom/app.py", line 205, in process_blocks
+    text_elem.text = request.form.get(f'content_{parent_id}[]', '')[content_idx]
+IndexError: string index out of range
+2025-04-08 20:03:26,419 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:26,421 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:27,692 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:27,693 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:28,228 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:28,229 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:29,321 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:29,322 INFO: POST request received for doc_id=21
+2025-04-08 20:03:29,322 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:29,325 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:03:29,325 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:03:29,345 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:29,346 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:29,639 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:29,639 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:30,888 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:30,889 INFO: POST request received for doc_id=21
+2025-04-08 20:03:30,889 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:30,892 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:03:30,893 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:03:30,917 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:30,918 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:31,110 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:31,110 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:32,215 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:32,215 INFO: POST request received for doc_id=21
+2025-04-08 20:03:32,216 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:32,218 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:03:32,219 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:03:32,235 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:32,235 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:32,469 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:32,469 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:33,199 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:33,200 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:35,439 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:35,439 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:36,385 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:36,386 INFO: POST request received for doc_id=21
+2025-04-08 20:03:36,386 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:36,389 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:03:36,390 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:03:36,413 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:36,414 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:36,655 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:36,655 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:37,828 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:37,828 INFO: POST request received for doc_id=21
+2025-04-08 20:03:37,828 INFO: Updating existing document: id=21, title=123
+2025-04-08 20:03:37,832 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 20:03:37,832 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 20:03:37,854 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:37,854 INFO: Rendering edit page for doc_id=21
+2025-04-08 20:03:38,050 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:03:38,050 INFO: Rendering edit page for doc_id=21
