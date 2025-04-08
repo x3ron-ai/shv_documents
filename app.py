@@ -1,4 +1,4 @@
-# окак!!
+# окак!!!!
 import os
 import random
 import string
@@ -8,14 +8,15 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 import xml.etree.ElementTree as ET
-from parser import XMLToWordParser
+from parser import XMLToWordParser # type: ignore
 from dotenv import load_dotenv
 import logging
 
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'случай_2025'
+app.secret_key = 'окак'
+
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO, filename='app.log', format='%(asctime)s %(levelname)s: %(message)s')
@@ -126,39 +127,55 @@ def index():
     templates = get_all_templates()
     return render_template('index.html', documents=documents, templates=templates, user=user)
 
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/create', methods=['GET'])
 def create():
     user = get_current_user()
     if not user:
         return redirect(url_for('login'))
-    if request.method == 'POST':
-        template_id = request.form.get('template_id')
-        title = request.form['title'].strip()
-        if not title:
-            return render_template('create.html', templates=get_all_templates(), error='Название документа не может быть пустым')
-        xml_path = f"{DOCUMENTS_DIR}/{user['id']}_{title.replace(' ', '_')}_{random.randint(1000, 9999)}.xml"
-        with get_db_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute('INSERT INTO documents (owner_id, template_id, title, xml_path) VALUES (%s, %s, %s, %s) RETURNING id',
-                            (user['id'], template_id if template_id else None, title, xml_path))
-                doc_id = cur.fetchone()['id']
-                conn.commit()
-        return redirect(url_for('edit_document', doc_id=doc_id))
-    return render_template('create.html', templates=get_all_templates(), error=None)
+    return redirect(url_for('edit_document', doc_id=0))
 
 @app.route('/document/<int:doc_id>', methods=['GET', 'POST'])
 def edit_document(doc_id):
+    print(doc_id)
     user = get_current_user()
     if not user:
         return redirect(url_for('login'))
-    with get_db_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute('SELECT * FROM documents WHERE id = %s AND owner_id = %s', (doc_id, user['id']))
-            document = cur.fetchone()
-            if not document:
-                return 'Документ не найден или не принадлежит вам', 403
+
+    document = None
+    if doc_id != 0:  # Проверяем существующий документ
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT * FROM documents WHERE id = %s AND owner_id = %s', (doc_id, user['id']))
+                document = cur.fetchone()
+                if not document:
+                    return 'Документ не найден или не принадлежит вам', 403
+        logger.info(f"Loaded existing document: id={doc_id}, title={document['title']}")
 
     if request.method == 'POST':
+        logger.info(f"POST request received for doc_id={doc_id}")
+        
+        if doc_id == 0:  # Создание нового документа
+            title = request.form.get('title', '').strip()
+            template_id = request.form.get('template_id')
+            if not title:
+                return render_template('edit.html', template_id=0, templates=get_all_templates(), error='Название документа не может быть пустым')
+            if not template_id:
+                return render_template('edit.html', template_id=0, templates=get_all_templates(), error='Выбор шаблона обязателен')
+            xml_path = f"{DOCUMENTS_DIR}/{user['id']}_{title.replace(' ', '_')}_{random.randint(1000, 9999)}.xml"
+            with get_db_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute('INSERT INTO documents (owner_id, template_id, title, xml_path) VALUES (%s, %s, %s, %s) RETURNING id',
+                                (user['id'], template_id, title, xml_path))
+                    doc_id = cur.fetchone()['id']
+                    conn.commit()
+            document = {'id': doc_id, 'title': title, 'xml_path': xml_path, 'template_id': template_id}
+            logger.info(f"Created new document: id={doc_id}, title={title}")
+        else:
+            if not document:
+                return 'Документ не найден', 404
+            logger.info(f"Updating existing document: id={doc_id}, title={document['title']}")
+
+        # Обработка блоков документа
         blocks = request.form.getlist('block_type[]')
         contents = request.form.getlist('content[]')
         aligns = request.form.getlist('align[]')
@@ -232,21 +249,29 @@ def edit_document(doc_id):
         xml_str = ET.tostring(root, encoding='utf-8', method='xml')
         with open(document['xml_path'], 'wb') as f:
             f.write(xml_str)
+        logger.info(f"Saved XML to {document['xml_path']}")
 
         if 'generate' in request.form:
             with get_db_connection() as conn:
                 with conn.cursor() as cur:
                     cur.execute('SELECT title_page_path FROM templates WHERE id = %s', (document['template_id'],))
                     template = cur.fetchone()
-            title_page_path = template['title_page_path'] if template else None
+            if not template:
+                return render_template('edit.html', template_id=doc_id, templates=get_all_templates(), error='Шаблон не найден')
+            title_page_path = template['title_page_path']
             parser = XMLToWordParser(document['xml_path'], TEMP_DOCX, title_page_path)
             result = parser.parse_and_convert()
             if "Ошибка" not in result:
+                logger.info(f"Generated DOCX for document id={doc_id}")
                 return send_file(TEMP_DOCX, as_attachment=True, download_name=f"{document['title']}_{doc_id}.docx")
-            return render_template('edit.html', template_id=doc_id, error=f"Ошибка генерации: {result}")
-        return "", 204
+            logger.error(f"Generation error: {result}")
+            return render_template('edit.html', template_id=doc_id, templates=get_all_templates(), error=f"Ошибка генерации: {result}")
+        
+        logger.info(f"Redirecting to edit_document with doc_id={doc_id}")
+        return redirect(url_for('edit_document', doc_id=doc_id))
 
-    return render_template('edit.html', template_id=doc_id, error=None)
+    logger.info(f"Rendering edit page for doc_id={doc_id}")
+    return render_template('edit.html', template_id=doc_id, templates=get_all_templates(), error=None)
 
 @app.route('/uploads/<path:filename>')
 def serve_uploaded_file(filename):
@@ -399,9 +424,9 @@ def get_template(doc_id):
 def generate_preview(docx_path):
     # Безопасное имя файла
     safe_filename = docx_path
-    preview_filename = f"preview_{safe_filename.replace('.docx', '.png')}"
+    preview_filename = f"static/previews/{safe_filename.replace('.docx', '.png').replace('uploads/', '')}"
     preview_path = preview_filename
-    pdf_path = os.path.join(TEMP_DIR, f"{safe_filename.replace('.docx', '.pdf')}")
+    pdf_path = os.path.join(TEMP_DIR, f"{safe_filename.replace('.docx', '.pdf').replace('uploads/', '')}")
 
     try:
         # Генерация PDF из DOCX
@@ -417,15 +442,14 @@ def generate_preview(docx_path):
         # Конвертация PDF в PNG
         logger.info(f"Конвертация PDF {pdf_path} в PNG {preview_path}")
         result = subprocess.run(
-            ['pdftoppm', pdf_path, preview_path.replace('.png', ''), '-png'],
+            ['pdftoppm', pdf_path, preview_path.replace('.png', ''), '-png', '-f', '1', '-l', '1', '-singlefile'],
             check=True, capture_output=True, text=True
         )
         logger.info(f"PNG успешно создан: {result.stdout}")
 
         # Удаляем временный PDF файл
         os.remove(pdf_path)
-        
-        return f"previews/{preview_filename}"
+        return f"{preview_filename}"
     except subprocess.CalledProcessError as e:
         logger.error(f"Ошибка генерации предпросмотра: {e.stderr}")
         if os.path.exists(pdf_path):

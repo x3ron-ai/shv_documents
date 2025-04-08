@@ -13,18 +13,25 @@
     </header>
     <div class="container">
         <main class="document" id="document" data-template-id="{{ template_id }}">
-    <h2>Редактировать документ</h2>
-    {% if error %}
-        <p style="color: #e74c3c;">{{ error }}</p>
-    {% endif %}
-    <form method="POST" id="docForm" enctype="multipart/form-data">
-                <div class="upload-section">
-                    <label>Загрузить титульный лист (DOCX): 
-                        <input type="file" name="title_page" accept=".docx">
+            <h2>Редактировать документ</h2>
+            {% if error %}
+                <p style="color: #e74c3c;">{{ error }}</p>
+            {% endif %}
+            <form method="POST" id="docForm" enctype="multipart/form-data">
+                {% if not template_id %}
+                    <label>Название документа: 
+                        <input type="text" name="title" required>
                     </label>
-                </div>
+                    <label>Выберите шаблон: 
+                        <select name="template_id" required>
+                            {% for template in templates %}
+                                <option value="{{ template.id }}">{{ template.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                {% endif %}
                 <div id="dropZone" class="drop-zone"></div>
-                <button type="submit" name="generate" class="generate-btn">Сгенерировать документ</button>
+                <button type="submit" name="generate" class="generate-btn">Сгенерировать и скачать</button>
             </form>
             <a href="{{ url_for('index') }}" class="back-btn">Назад к документам</a>
         </main>
@@ -44,7 +51,7 @@
         </aside>
     </div>
     <footer class="footer">
-        <p>&copy; 2025 Генератор документов</p>
+        <p>© 2025 Генератор документов</p>
     </footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

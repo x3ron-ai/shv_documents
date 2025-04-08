@@ -24,7 +24,7 @@
             <h2>Доступные шаблоны</h2>
             <ul class="document-list">
                 {% for template in templates %}
-                    <li>{{ template.title }} <img src="/{{ template.preview_path }}" style="max-width: 100px; border-radius: 4px;"></li>
+                    <li>{{ template.title }} <img src="/{{ template.preview_path }}"></li>
                 {% endfor %}
             </ul>
             <a href="{{ url_for('create_template') }}" class="create-btn">Создать новый шаблон</a>

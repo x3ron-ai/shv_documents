@@ -27,7 +27,7 @@
             <select onchange="document.getElementById('preview').src = this.value ? this.value : '';">
                 <option value="">Без шаблона</option>
                 {% for template in templates %}
-                    <option value="{{ url_for('static', filename=template.preview_path) }}">{{ template.title }}</option>
+                    <option value="{{ url_for('static', filename=template.preview_path.replace('static/', '')) }}">{{ template.title }}</option>
                 {% endfor %}
             </select>
             <img id="preview" src="" style="max-width: 300px; display: block; margin-top: 10px; border-radius: 4px;">

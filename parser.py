@@ -1,3 +1,4 @@
+# type: ignore
 from docx import Document
 import os
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -10,15 +11,16 @@ class XMLToWordParser:
         self.xml_path = xml_path
         self.output_path = output_path
         self.title_page_path = title_page_path
-        self.doc = Document()
+        # Если есть титульный лист, используем его как основу, иначе создаем новый документ
+        self.doc = Document(self.title_page_path) if self.title_page_path else Document()
 
     def parse_and_convert(self):
         try:
+            # Если есть титульный лист, добавляем разрыв страницы после него
             if self.title_page_path:
-                title_doc = Document(self.title_page_path)
-                for element in title_doc.element.body:
-                    self.doc.element.body.append(element)
+                self.doc.add_page_break()
 
+            # Парсим XML и добавляем контент
             with open(self.xml_path, 'r', encoding='utf-8') as f:
                 root = ET.fromstring(f.read())
 

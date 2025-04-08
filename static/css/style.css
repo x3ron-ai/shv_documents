@@ -240,6 +240,24 @@ button[type="button"]:hover {
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
+.document-list {
+    display: flex;
+    align-content: space-between;
+    flex-direction: row;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.document-list li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.document-list img {
+    max-width: 300px;
+}
+
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
