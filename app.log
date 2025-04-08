@@ -2772,3 +2772,5 @@ IndexError: string index out of range
 2025-04-08 20:11:34,617 INFO: Updating existing document: id=21, title=123
 2025-04-08 20:11:34,620 INFO: Saved XML to documents/1_123_7914.xml
 2025-04-08 20:11:34,671 INFO: Generated DOCX for document id=21
+2025-04-08 20:12:11,634 INFO: Loaded existing document: id=21, title=123
+2025-04-08 20:12:11,635 INFO: Rendering edit page for doc_id=21
