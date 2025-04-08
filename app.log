@@ -1194,3 +1194,239 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint '/' wit
 2025-04-08 18:57:23,386 INFO: Updating existing document: id=21, title=123
 2025-04-08 18:57:23,392 INFO: Saved XML to documents/1_123_7914.xml
 2025-04-08 18:57:23,425 INFO: Generated DOCX for document id=21
+2025-04-08 19:10:29,851 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:10:29,851 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:10:32,357 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:10:32,358 INFO: POST request received for doc_id=21
+2025-04-08 19:10:32,359 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:10:32,363 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:10:32,386 ERROR: Generation error: Ошибка при генерации документа: "no style with name 'Caption'"
+2025-04-08 19:12:51,863 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:12:51,864 INFO: POST request received for doc_id=21
+2025-04-08 19:12:51,864 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:12:51,869 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:12:51,888 ERROR: Generation error: Ошибка при генерации документа: "no style with name 'Caption'"
+2025-04-08 19:12:56,193 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:12:56,194 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:12:57,619 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:12:57,619 INFO: POST request received for doc_id=21
+2025-04-08 19:12:57,620 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:12:57,625 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:12:57,647 ERROR: Generation error: Ошибка при генерации документа: "no style with name 'Caption'"
+2025-04-08 19:13:13,121 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:13,121 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:17,189 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:17,189 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:18,878 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:18,879 INFO: POST request received for doc_id=21
+2025-04-08 19:13:18,879 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:18,884 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:18,905 ERROR: Generation error: Ошибка при генерации документа: "no style with name 'Caption'"
+2025-04-08 19:13:23,367 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:23,368 INFO: POST request received for doc_id=21
+2025-04-08 19:13:23,368 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:23,370 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:23,370 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:23,390 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:23,391 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:27,181 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:27,181 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:31,252 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:31,253 INFO: POST request received for doc_id=21
+2025-04-08 19:13:31,253 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:31,255 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:31,256 INFO: POST request received for doc_id=21
+2025-04-08 19:13:31,256 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:31,259 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:31,259 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:31,259 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:31,259 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:31,281 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:31,281 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:31,292 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:31,293 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:32,535 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:32,535 INFO: POST request received for doc_id=21
+2025-04-08 19:13:32,535 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:32,540 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:32,540 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:32,571 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:32,571 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:34,760 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:34,761 INFO: POST request received for doc_id=21
+2025-04-08 19:13:34,761 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:34,767 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:34,767 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:34,792 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:34,793 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:37,925 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:37,926 INFO: POST request received for doc_id=21
+2025-04-08 19:13:37,926 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:37,932 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:37,932 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:37,955 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:37,956 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:37,984 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:37,985 INFO: POST request received for doc_id=21
+2025-04-08 19:13:37,985 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:37,997 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:37,997 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:38,024 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:38,024 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:38,202 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:38,202 INFO: POST request received for doc_id=21
+2025-04-08 19:13:38,202 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:38,207 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:38,207 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:38,230 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:38,230 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:38,328 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:38,328 INFO: POST request received for doc_id=21
+2025-04-08 19:13:38,328 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:38,333 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:38,333 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:38,353 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:38,353 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:38,385 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:38,386 INFO: POST request received for doc_id=21
+2025-04-08 19:13:38,386 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:38,392 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:38,392 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:38,414 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:38,414 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:38,459 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:38,459 INFO: POST request received for doc_id=21
+2025-04-08 19:13:38,460 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:38,465 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:38,465 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:38,488 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:38,488 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:38,539 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:38,539 INFO: POST request received for doc_id=21
+2025-04-08 19:13:38,539 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:38,545 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:38,545 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:13:38,568 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:38,568 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:13:39,769 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:13:39,769 INFO: POST request received for doc_id=21
+2025-04-08 19:13:39,769 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:13:39,777 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:13:39,800 ERROR: Generation error: Ошибка при генерации документа: "no style with name 'Caption'"
+2025-04-08 19:14:33,718 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:14:33,720 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:14:35,267 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:14:35,267 INFO: POST request received for doc_id=21
+2025-04-08 19:14:35,268 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:14:35,272 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:14:35,308 INFO: Generated DOCX for document id=21
+2025-04-08 19:15:18,352 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,354 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,354 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,360 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,360 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,383 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,384 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:18,453 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,454 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,454 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,462 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,464 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,477 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,478 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,478 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,486 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,486 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,500 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,501 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:18,516 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,516 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:18,586 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,586 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,587 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,590 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,591 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,605 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,606 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,605 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,606 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,606 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,606 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,609 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,609 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,610 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,611 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,636 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,637 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:18,644 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,644 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:18,647 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,647 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:18,734 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,734 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,735 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,738 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,738 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,751 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,751 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,751 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,755 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,755 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,763 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,764 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,764 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,769 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,770 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:18,770 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,772 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,805 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,806 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:18,824 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,824 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:18,889 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,890 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,890 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,895 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,896 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,900 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,900 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,900 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,903 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,903 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,910 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,910 INFO: POST request received for doc_id=21
+2025-04-08 19:15:18,910 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:18,914 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:18,914 INFO: Redirecting to edit_document with doc_id=21
+2025-04-08 19:15:18,935 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,936 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:18,936 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,936 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:18,954 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:18,955 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:15:19,418 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:15:19,418 INFO: POST request received for doc_id=21
+2025-04-08 19:15:19,418 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:15:19,422 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:15:19,465 INFO: Generated DOCX for document id=21
+2025-04-08 19:17:40,670 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:17:40,671 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:17:42,951 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:17:42,951 INFO: POST request received for doc_id=21
+2025-04-08 19:17:42,951 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:17:42,955 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:17:42,997 INFO: Generated DOCX for document id=21
+2025-04-08 19:21:39,462 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:21:39,462 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:21:41,132 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:21:41,132 INFO: POST request received for doc_id=21
+2025-04-08 19:21:41,132 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:21:41,136 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:21:41,176 INFO: Generated DOCX for document id=21
+2025-04-08 19:23:13,369 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:23:13,369 INFO: Rendering edit page for doc_id=21
+2025-04-08 19:23:14,837 INFO: Loaded existing document: id=21, title=123
+2025-04-08 19:23:14,838 INFO: POST request received for doc_id=21
+2025-04-08 19:23:14,838 INFO: Updating existing document: id=21, title=123
+2025-04-08 19:23:14,842 INFO: Saved XML to documents/1_123_7914.xml
+2025-04-08 19:23:14,881 INFO: Generated DOCX for document id=21

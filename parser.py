@@ -5,22 +5,32 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 import re
 import xml.etree.ElementTree as ET
 from docx.shared import Pt, Inches, RGBColor
+from docx.oxml import OxmlElement, ns
+from docx.enum.style import WD_STYLE_TYPE
 
 class XMLToWordParser:
     def __init__(self, xml_path, output_path, title_page_path=None):
         self.xml_path = xml_path
         self.output_path = output_path
         self.title_page_path = title_page_path
-        # Если есть титульный лист, используем его как основу, иначе создаем новый документ
         self.doc = Document(self.title_page_path) if self.title_page_path else Document()
+        self._add_caption_style()
+
+    def _add_caption_style(self):
+        """Добавляет стиль 'Подпись' в документ, если он отсутствует."""
+        styles = self.doc.styles
+        if 'Подпись' not in styles:
+            style = styles.add_style('Подпись', WD_STYLE_TYPE.PARAGRAPH)
+            style.font.name = 'Times New Roman'
+            style.font.size = Pt(12)
+            style.font.color.rgb = RGBColor(0, 0, 0)
+            style.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     def parse_and_convert(self):
         try:
-            # Если есть титульный лист, добавляем разрыв страницы после него
             if self.title_page_path:
                 self.doc.add_page_break()
 
-            # Парсим XML и добавляем контент
             with open(self.xml_path, 'r', encoding='utf-8') as f:
                 root = ET.fromstring(f.read())
 
@@ -111,17 +121,53 @@ class XMLToWordParser:
                 p = self.doc.add_paragraph(item.text)
                 p.style = 'List Bullet' if list_type == "bullet" else 'List Number'
 
+    def _add_caption(self, caption: str):
+        """Добавляет подпись с автоматической нумерацией для рисунков."""
+        target = 'Рисунок'
+        paragraph = self.doc.add_paragraph(f'{target} ', style='Подпись')
+
+        # Добавляем поле SEQ
+        run = paragraph.add_run()
+        fldChar = OxmlElement('w:fldChar')
+        fldChar.set(ns.qn('w:fldCharType'), 'begin')
+        run._r.append(fldChar)
+
+        instrText = OxmlElement('w:instrText')
+        instrText.text = f'SEQ {target} \\* ARABIC'
+        run._r.append(instrText)
+
+        fldChar = OxmlElement('w:fldChar')
+        fldChar.set(ns.qn('w:fldCharType'), 'end')
+        run._r.append(fldChar)
+
+        # Добавляем текст подписи
+        paragraph.add_run(f' - {caption}')
+
+        # Применяем форматирование из стиля 'Подпись', если нужно дополнительное форматирование
+        return paragraph
+
     def _add_image(self, image_element):
         path = image_element.get("path")
         if path and os.path.exists(path):
-            self.doc.add_picture(path, width=Inches(4))
+            # Добавляем рисунок
+            paragraph = self.doc.add_paragraph()
+            paragraph.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = paragraph.add_run()
+            run.add_picture(path, width=Inches(4))
+
+            # Добавляем подпись, если она указана   
             caption = image_element.get("caption")
             if caption:
-                p = self.doc.add_paragraph(caption)
-                p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                run = p.runs[0]
+                caption_paragraph = self._add_caption(caption)
+                # Применяем дополнительное форматирование из XML
+                run = caption_paragraph.runs[-1]  # Последний run содержит текст подписи
                 run.font.bold = image_element.get("caption_bold") == "true"
                 run.font.size = Pt(int(image_element.get("caption_size", "12")))
                 run.font.name = image_element.get("caption_face", "Times New Roman")
                 color = image_element.get("caption_color", "000000")
                 run.font.color.rgb = RGBColor(int(color[0:2], 16), int(color[2:4], 16), int(color[4:6], 16))
+
+if __name__ == "__main__":
+    parser = XMLToWordParser("input.xml", "output.docx", "title_page.docx")
+    result = parser.parse_and_convert()
+    print(result)
