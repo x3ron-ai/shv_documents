@@ -1,4 +1,3 @@
-# type: ignore
 from docx import Document
 import os
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -13,12 +12,11 @@ class XMLToWordParser:
         self.xml_path = xml_path
         self.output_path = output_path
         self.title_page_path = title_page_path
-
         self.doc = Document(self.title_page_path) if self.title_page_path else Document()
         self._add_caption_style()
+        self._add_list_styles()
 
     def _add_caption_style(self):
-        """Добавляет стиль 'Подпись' в документ, если он отсутствует."""
         styles = self.doc.styles
         if 'Подпись' not in styles:
             style = styles.add_style('Подпись', WD_STYLE_TYPE.PARAGRAPH)
@@ -27,16 +25,45 @@ class XMLToWordParser:
             style.font.color.rgb = RGBColor(0, 0, 0)
             style.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
+    def _add_list_styles(self):
+        styles = self.doc.styles
+        if 'List Bullet' not in styles:
+            bullet_style = styles.add_style('List Bullet', WD_STYLE_TYPE.PARAGRAPH)
+            bullet_style.font.name = 'Times New Roman'
+            bullet_style.font.size = Pt(12)
+            bullet_style.paragraph_format.left_indent = Inches(0.5)
+            bullet_style.paragraph_format.first_line_indent = Inches(-0.25)
+            bullet_p = bullet_style._element.get_or_add_pPr()
+            numPr = OxmlElement('w:numPr')
+            ilvl = OxmlElement('w:ilvl')
+            ilvl.set(ns.qn('w:val'), '0')
+            numId = OxmlElement('w:numId')
+            numId.set(ns.qn('w:val'), '1')
+            numPr.append(ilvl)
+            numPr.append(numId)
+            bullet_p.append(numPr)
+        if 'List Number' not in styles:
+            number_style = styles.add_style('List Number', WD_STYLE_TYPE.PARAGRAPH)
+            number_style.font.name = 'Times New Roman'
+            number_style.font.size = Pt(12)
+            number_style.paragraph_format.left_indent = Inches(0.5)
+            number_style.paragraph_format.first_line_indent = Inches(-0.25)
+            number_p = number_style._element.get_or_add_pPr()
+            numPr = OxmlElement('w:numPr')
+            ilvl = OxmlElement('w:ilvl')
+            ilvl.set(ns.qn('w:val'), '0')
+            numId = OxmlElement('w:numId')
+            numId.set(ns.qn('w:val'), '2')
+            numPr.append(ilvl)
+            numPr.append(numId)
+            number_p.append(numPr)
+
     def parse_and_convert(self):
         try:
-
             if self.title_page_path:
                 self.doc.add_page_break()
-
-
             with open(self.xml_path, 'r', encoding='utf-8') as f:
                 root = ET.fromstring(f.read())
-
             for element in root:
                 if element.tag == "text":
                     self._add_text(element)
@@ -46,7 +73,6 @@ class XMLToWordParser:
                     self._add_list(element)
                 elif element.tag == "image":
                     self._add_image(element)
-
             self.doc.save(self.output_path)
             return self.output_path
         except Exception as e:
@@ -60,14 +86,12 @@ class XMLToWordParser:
         line_spacing = float(text_element.get("line_spacing", "1.5"))
         font_face = text_element.get("font_face", "Times New Roman")
         font_size = int(text_element.get("font_size", "14"))
-
         align_map = {
             "left": WD_ALIGN_PARAGRAPH.LEFT,
             "center": WD_ALIGN_PARAGRAPH.CENTER,
             "right": WD_ALIGN_PARAGRAPH.RIGHT,
             "justify": WD_ALIGN_PARAGRAPH.JUSTIFY
         }
-
         if text:
             paragraph = self.doc.add_paragraph()
             paragraph.paragraph_format.alignment = align_map.get(alignment, WD_ALIGN_PARAGRAPH.JUSTIFY)
@@ -77,7 +101,6 @@ class XMLToWordParser:
             parts = re.split(r'(<[^>]+>)', text)
             bold = False
             font_color = (0, 0, 0)
-
             for part in parts:
                 if part.startswith('<') and part.endswith('>'):
                     if part == '<b>':
@@ -106,12 +129,10 @@ class XMLToWordParser:
         rows = list(table_element.findall("row"))
         table = self.doc.add_table(rows=len(rows), cols=len(col_widths))
         table.style = 'Table Grid'
-
         for i, row in enumerate(rows):
             cells = row.findall("cell")
             for j, cell in enumerate(cells):
                 table.rows[i].cells[j].text = cell.text or ""
-
         for i, width in enumerate(col_widths):
             for cell in table.columns[i].cells:
                 cell.width = Inches(width)
@@ -120,50 +141,48 @@ class XMLToWordParser:
         list_type = list_element.get("type", "bullet")
         items = list_element.findall("item")
         for item in items:
-            if item.text:
-                p = self.doc.add_paragraph(item.text)
-                p.style = 'List Bullet' if list_type == "bullet" else 'List Number'
+            p = self.doc.add_paragraph()
+            p.style = 'List Bullet' if list_type == "bullet" else 'List Number'
+            title = item.find("title")
+            if title is not None and title.text:
+                p.add_run(title.text)
+            for nested in item:
+                if nested.tag != "title":
+                    if nested.tag == "text":
+                        self.doc.add_paragraph()
+                        self._add_text(nested)
+                    elif nested.tag == "table":
+                        self._add_table(nested)
+                    elif nested.tag == "image":
+                        self._add_image(nested)
 
     def _add_caption(self, caption: str):
-        """Добавляет подпись с автоматической нумерацией для рисунков."""
         target = 'Рисунок'
         paragraph = self.doc.add_paragraph(f'{target} ', style='Подпись')
-
-        # Добавляем поле SEQ
         run = paragraph.add_run()
         fldChar = OxmlElement('w:fldChar')
         fldChar.set(ns.qn('w:fldCharType'), 'begin')
         run._r.append(fldChar)
-
         instrText = OxmlElement('w:instrText')
         instrText.text = f'SEQ {target} \\* ARABIC'
         run._r.append(instrText)
-
         fldChar = OxmlElement('w:fldChar')
         fldChar.set(ns.qn('w:fldCharType'), 'end')
         run._r.append(fldChar)
-
-        # Добавляем текст подписи
         paragraph.add_run(f' - {caption}')
-
-        # Применяем форматирование из стиля 'Подпись', если нужно дополнительное форматирование
         return paragraph
 
     def _add_image(self, image_element):
         path = image_element.get("path")
         if path and os.path.exists(path):
-            # Добавляем рисунок
             paragraph = self.doc.add_paragraph()
             paragraph.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
             run = paragraph.add_run()
             run.add_picture(path, width=Inches(4))
-
-            # Добавляем подпись, если она указана   
             caption = image_element.get("caption")
             if caption:
                 caption_paragraph = self._add_caption(caption)
-                # Применяем дополнительное форматирование из XML
-                run = caption_paragraph.runs[-1]  # Последний run содержит текст подписи
+                run = caption_paragraph.runs[-1]
                 run.font.bold = image_element.get("caption_bold") == "true"
                 run.font.size = Pt(int(image_element.get("caption_size", "12")))
                 run.font.name = image_element.get("caption_face", "Times New Roman")
@@ -174,3 +193,4 @@ if __name__ == "__main__":
     parser = XMLToWordParser("input.xml", "output.docx", "title_page.docx")
     result = parser.parse_and_convert()
     print(result)
+     # type: ignore
