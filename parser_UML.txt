@@ -1,0 +1,17 @@
+@startuml
+class XMLToWordParser {
+    _add_caption_style()
+    _add_list_styles()
+    parse_and_convert()
+    _add_text()
+    _add_table()
+    _add_list()
+    _add_caption()
+    _add_image()
+        xml_path
+    output_path
+    title_page_path
+    doc
+    __init__()
+}
+@enduml

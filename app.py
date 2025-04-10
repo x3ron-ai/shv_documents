@@ -82,6 +82,7 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
+        logger.info(f"REGISTER - {username} {password} {email}")
         with get_db_connection() as conn:
             with conn.cursor() as cur:
                 try:
