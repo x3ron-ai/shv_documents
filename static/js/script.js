@@ -1,5 +1,6 @@
 let blockCount = 0;
 const dropZone = document.getElementById('dropZone');
+let isDropping = false; // Защита от многократного вызова drop
 
 function drag(event) {
     event.dataTransfer.setData("text", event.target.getAttribute('data-type'));
@@ -16,16 +17,25 @@ function allowDrop(event) {
 
 function drop(event) {
     event.preventDefault();
+    event.stopPropagation(); // Останавливаем всплытие события
+    if (isDropping) return; // Предотвращаем множественные вызовы
+    isDropping = true;
     const data = event.dataTransfer.getData("text");
-    console.log(`Dropped type: ${data}`); // Отладка
+    console.log(`Dropped type: ${data}`);
+    // Проверяем, что dropZone является целевым элементом
+    if (event.target.closest('#dropZone') !== dropZone) {
+        isDropping = false;
+        return;
+    }
     if (data.startsWith('block_')) {
         const block = document.getElementById(data);
-        event.target.closest('#dropZone').appendChild(block);
+        dropZone.appendChild(block);
         saveTemplate();
     } else {
         addBlock(data);
-        setTimeout(saveTemplate, 0);
+        saveTemplate();
     }
+    isDropping = false;
 }
 
 function addBlock(type, parentId = null, itemId = null) {
@@ -39,7 +49,7 @@ function addBlock(type, parentId = null, itemId = null) {
     block.ondragend = () => block.classList.remove('dragging');
 
     let html = `<input type="hidden" name="block_type[]" value="${type}">`;
-    console.log(`Adding block of type: ${type}, id: ${block.id}`); // Отладка
+    console.log(`Adding block of type: ${type}, id: ${block.id}`);
     
     if (type === 'numbered_list') {
         html += `
@@ -203,6 +213,9 @@ function previewImage(input, blockId) {
 
 function dropNested(event, parentId, itemId) {
     event.preventDefault();
+    event.stopPropagation(); // Останавливаем всплытие для вложенных зон
+    if (isDropping) return;
+    isDropping = true;
     const data = event.dataTransfer.getData("text");
     if (data.startsWith('block_')) {
         const block = document.getElementById(data);
@@ -211,50 +224,67 @@ function dropNested(event, parentId, itemId) {
         addBlock(data, parentId, itemId);
     }
     saveTemplate();
+    isDropping = false;
 }
 
-function saveTemplate(docId = null) {
-    const form = document.getElementById('docForm');
-    const formData = new FormData(form);
-    console.log('FormData before submit:');
-    for (const [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-    }
-    
-    const effectiveDocId = docId || document.getElementById('document').getAttribute('data-template-id') || '0';
-    fetch(`/document/${effectiveDocId}`, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())  // Ожидаем JSON
-    .then(data => {
+let isSaving = false;
+async function saveTemplate(docId = null) {
+    if (isSaving) return;
+    isSaving = true;
+    try {
+        const form = document.getElementById('docForm');
+        const formData = new FormData(form);
+        console.log('FormData before submit:');
+        for (const [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+        const effectiveDocId = docId || document.getElementById('document').getAttribute('data-template-id') || '0';
+        const response = await fetch(`/document/${effectiveDocId}`, {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
         if (data.success) {
             console.log(`Document saved successfully, doc_id: ${data.doc_id}`);
-            // Здесь можно добавить уведомление на странице, если нужно
+            if (effectiveDocId === '0' && data.doc_id !== '0') {
+                const newUrl = `/document/${data.doc_id}`;
+                window.history.replaceState({}, '', newUrl);
+                document.getElementById('document').setAttribute('data-template-id', data.doc_id);
+                document.querySelector('h1').textContent = `Редактирование документа #${data.doc_id}`;
+                const titleInput = form.querySelector('input[name="title"]');
+                const templateSelect = form.querySelector('select[name="template_id"]');
+                if (titleInput) titleInput.parentElement.style.display = 'none';
+                if (templateSelect) templateSelect.parentElement.style.display = 'none';
+            }
         } else if (data.error) {
             console.error(`Save error: ${data.error}`);
             alert(`Ошибка сохранения: ${data.error}`);
         }
-    })
-    .catch(error => console.error('Error:', error));
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        isSaving = false;
+    }
 }
 
 dropZone.ondragover = allowDrop;
 dropZone.ondrop = drop;
 
 const docId = document.getElementById('document').getAttribute('data-template-id');
-if (docId) {
+if (docId && docId !== '0') {
     fetch('/get_template/' + docId)
         .then(response => response.json())
         .then(data => {
             console.log('Loaded template data:', data);
+            dropZone.innerHTML = ''; // Очищаем dropZone
+            blockCount = 0; // Сбрасываем счетчик
             let contentIdx = 0;
             let listItemIdx = 0;
             data.blocks.forEach((type, blockIdx) => {
                 if (type === 'numbered_list') {
                     addBlock('numbered_list');
                     const block = document.getElementById(`block_${blockCount - 1}`);
-                    while (listItemIdx < data.list_item_titles.length && (blockIdx + 1 >= data.blocks.length || data.blocks[blockIdx + 1] === 'list_item')) {
+                    while (listItemIdx < data.list_item_titles.length && (blockIdx + 1 < data.blocks.length && data.blocks[blockIdx + 1] === 'list_item')) {
                         addListItem(block.id);
                         const itemBlock = document.getElementById(`block_${blockCount - 1}`);
                         itemBlock.querySelector('.list-item-title').value = data.list_item_titles[listItemIdx] || "";
@@ -264,20 +294,20 @@ if (docId) {
                             const nestedBlock = document.getElementById(`block_${blockCount - 1}`);
                             nestedBlock.querySelector('.contenteditable').innerHTML = data.contents[contentIdx] || "";
                             nestedBlock.querySelector(`#content_${nestedBlock.id}`).value = data.contents[contentIdx] || "";
-                            nestedBlock.querySelector(`#align_${nestedBlock.id}`).value = data.aligns[contentIdx];
-                            nestedBlock.querySelector(`select[onchange*="align"]`).value = data.aligns[contentIdx];
-                            nestedBlock.querySelector(`#indent_left_${nestedBlock.id}`).value = data.indents_left[contentIdx];
-                            nestedBlock.querySelector(`input[onchange*="indent_left"]`).value = data.indents_left[contentIdx];
-                            nestedBlock.querySelector(`#indent_first_line_${nestedBlock.id}`).value = data.indents_first_line[contentIdx];
-                            nestedBlock.querySelector(`input[onchange*="indent_first_line"]`).value = data.indents_first_line[contentIdx];
-                            nestedBlock.querySelector(`#line_spacing_${nestedBlock.id}`).value = data.line_spacings[contentIdx];
-                            nestedBlock.querySelector(`input[onchange*="line_spacing"]`).value = data.line_spacings[contentIdx];
-                            nestedBlock.querySelector(`#face_${nestedBlock.id}`).value = data.font_faces[contentIdx];
-                            nestedBlock.querySelector('.contenteditable').style.fontFamily = data.font_faces[contentIdx];
-                            nestedBlock.querySelector(`select[onchange*="face"]`).value = data.font_faces[contentIdx];
-                            nestedBlock.querySelector(`#size_${nestedBlock.id}`).value = data.font_sizes[contentIdx];
-                            nestedBlock.querySelector('.contenteditable').style.fontSize = `${data.font_sizes[contentIdx]}px`;
-                            nestedBlock.querySelector(`input[onchange*="size"]`).value = data.font_sizes[contentIdx];
+                            nestedBlock.querySelector(`#align_${nestedBlock.id}`).value = data.aligns[contentIdx] || 'justify';
+                            nestedBlock.querySelector(`select[onchange*="align"]`).value = data.aligns[contentIdx] || 'justify';
+                            nestedBlock.querySelector(`#indent_left_${nestedBlock.id}`).value = data.indents_left[contentIdx] || '0';
+                            nestedBlock.querySelector(`input[onchange*="indent_left"]`).value = data.indents_left[contentIdx] || '0';
+                            nestedBlock.querySelector(`#indent_first_line_${nestedBlock.id}`).value = data.indents_first_line[contentIdx] || '0';
+                            nestedBlock.querySelector(`input[onchange*="indent_first_line"]`).value = data.indents_first_line[contentIdx] || '0';
+                            nestedBlock.querySelector(`#line_spacing_${nestedBlock.id}`).value = data.line_spacings[contentIdx] || '1.5';
+                            nestedBlock.querySelector(`input[onchange*="line_spacing"]`).value = data.line_spacings[contentIdx] || '1.5';
+                            nestedBlock.querySelector(`#face_${nestedBlock.id}`).value = data.font_faces[contentIdx] || 'Times New Roman';
+                            nestedBlock.querySelector('.contenteditable').style.fontFamily = data.font_faces[contentIdx] || 'Times New Roman';
+                            nestedBlock.querySelector(`select[onchange*="face"]`).value = data.font_faces[contentIdx] || 'Times New Roman';
+                            nestedBlock.querySelector(`#size_${nestedBlock.id}`).value = data.font_sizes[contentIdx] || '14';
+                            nestedBlock.querySelector('.contenteditable').style.fontSize = `${data.font_sizes[contentIdx] || 14}px`;
+                            nestedBlock.querySelector(`input[onchange*="size"]`).value = data.font_sizes[contentIdx] || '14';
                             contentIdx++;
                             blockIdx++;
                         }
@@ -290,24 +320,24 @@ if (docId) {
                         const editable = block.querySelector('.contenteditable');
                         editable.innerHTML = data.contents[contentIdx] || "";
                         block.querySelector(`#content_${block.id}`).value = data.contents[contentIdx] || "";
-                        block.querySelector(`#align_${block.id}`).value = data.aligns[contentIdx];
-                        block.querySelector(`select[onchange*="align"]`).value = data.aligns[contentIdx];
-                        block.querySelector(`#indent_left_${block.id}`).value = data.indents_left[contentIdx];
-                        block.querySelector(`input[onchange*="indent_left"]`).value = data.indents_left[contentIdx];
-                        block.querySelector(`#indent_first_line_${block.id}`).value = data.indents_first_line[contentIdx];
-                        block.querySelector(`input[onchange*="indent_first_line"]`).value = data.indents_first_line[contentIdx];
-                        block.querySelector(`#line_spacing_${block.id}`).value = data.line_spacings[contentIdx];
-                        block.querySelector(`input[onchange*="line_spacing"]`).value = data.line_spacings[contentIdx];
-                        block.querySelector(`#face_${block.id}`).value = data.font_faces[contentIdx];
-                        editable.style.fontFamily = data.font_faces[contentIdx];
-                        block.querySelector(`select[onchange*="face"]`).value = data.font_faces[contentIdx];
-                        block.querySelector(`#size_${block.id}`).value = data.font_sizes[contentIdx];
-                        editable.style.fontSize = `${data.font_sizes[contentIdx]}px`;
-                        block.querySelector(`input[onchange*="size"]`).value = data.font_sizes[contentIdx];
+                        block.querySelector(`#align_${block.id}`).value = data.aligns[contentIdx] || 'justify';
+                        block.querySelector(`select[onchange*="align"]`).value = data.aligns[contentIdx] || 'justify';
+                        block.querySelector(`#indent_left_${block.id}`).value = data.indents_left[contentIdx] || '0';
+                        block.querySelector(`input[onchange*="indent_left"]`).value = data.indents_left[contentIdx] || '0';
+                        block.querySelector(`#indent_first_line_${block.id}`).value = data.indents_first_line[contentIdx] || '0';
+                        block.querySelector(`input[onchange*="indent_first_line"]`).value = data.indents_first_line[contentIdx] || '0';
+                        block.querySelector(`#line_spacing_${block.id}`).value = data.line_spacings[contentIdx] || '1.5';
+                        block.querySelector(`input[onchange*="line_spacing"]`).value = data.line_spacings[contentIdx] || '1.5';
+                        block.querySelector(`#face_${block.id}`).value = data.font_faces[contentIdx] || 'Times New Roman';
+                        editable.style.fontFamily = data.font_faces[contentIdx] || 'Times New Roman';
+                        block.querySelector(`select[onchange*="face"]`).value = data.font_faces[contentIdx] || 'Times New Roman';
+                        block.querySelector(`#size_${block.id}`).value = data.font_sizes[contentIdx] || '14';
+                        editable.style.fontSize = `${data.font_sizes[contentIdx] || 14}px`;
+                        block.querySelector(`input[onchange*="size"]`).value = data.font_sizes[contentIdx] || '14';
                         contentIdx++;
                     } else if (type === 'table') {
                         block.querySelector('textarea').value = data.contents[contentIdx] || "";
-                        block.querySelector('input[name="col_widths"]').value = data.col_widths;
+                        block.querySelector('input[name="col_widths"]').value = data.col_widths || '2,1,2';
                         contentIdx++;
                     } else if (type === 'image') {
                         block.querySelector(`#caption_${block.id}`).value = data.captions[blockIdx] || "";

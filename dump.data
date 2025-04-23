@@ -1,0 +1,394 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 12.20 (Ubuntu 12.20-0ubuntu0.20.04.1)
+-- Dumped by pg_dump version 12.20 (Ubuntu 12.20-0ubuntu0.20.04.1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: documents; Type: TABLE; Schema: public; Owner: x3ron
+--
+
+CREATE TABLE public.documents (
+    id integer NOT NULL,
+    owner_id integer NOT NULL,
+    template_id integer,
+    title character varying(100) NOT NULL,
+    xml_path character varying(255) NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.documents OWNER TO x3ron;
+
+--
+-- Name: documents_id_seq; Type: SEQUENCE; Schema: public; Owner: x3ron
+--
+
+CREATE SEQUENCE public.documents_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.documents_id_seq OWNER TO x3ron;
+
+--
+-- Name: documents_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: x3ron
+--
+
+ALTER SEQUENCE public.documents_id_seq OWNED BY public.documents.id;
+
+
+--
+-- Name: sessions; Type: TABLE; Schema: public; Owner: x3ron
+--
+
+CREATE TABLE public.sessions (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    session_token character varying(128) NOT NULL,
+    expires_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.sessions OWNER TO x3ron;
+
+--
+-- Name: sessions_id_seq; Type: SEQUENCE; Schema: public; Owner: x3ron
+--
+
+CREATE SEQUENCE public.sessions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sessions_id_seq OWNER TO x3ron;
+
+--
+-- Name: sessions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: x3ron
+--
+
+ALTER SEQUENCE public.sessions_id_seq OWNED BY public.sessions.id;
+
+
+--
+-- Name: templates; Type: TABLE; Schema: public; Owner: x3ron
+--
+
+CREATE TABLE public.templates (
+    id integer NOT NULL,
+    author_id integer NOT NULL,
+    title character varying(100) NOT NULL,
+    title_page_path character varying(255) NOT NULL,
+    preview_path character varying(255),
+    default_font_face character varying(50) DEFAULT 'Times New Roman'::character varying,
+    default_font_size integer DEFAULT 14,
+    default_indent_left real DEFAULT 0,
+    default_indent_first_line real DEFAULT 0,
+    default_line_spacing real DEFAULT 1.5,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.templates OWNER TO x3ron;
+
+--
+-- Name: templates_id_seq; Type: SEQUENCE; Schema: public; Owner: x3ron
+--
+
+CREATE SEQUENCE public.templates_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.templates_id_seq OWNER TO x3ron;
+
+--
+-- Name: templates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: x3ron
+--
+
+ALTER SEQUENCE public.templates_id_seq OWNED BY public.templates.id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: x3ron
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    username character varying(50) NOT NULL,
+    password_hash character varying(255) NOT NULL,
+    email character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO x3ron;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: x3ron
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_id_seq OWNER TO x3ron;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: x3ron
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: documents id; Type: DEFAULT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.documents ALTER COLUMN id SET DEFAULT nextval('public.documents_id_seq'::regclass);
+
+
+--
+-- Name: sessions id; Type: DEFAULT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.sessions ALTER COLUMN id SET DEFAULT nextval('public.sessions_id_seq'::regclass);
+
+
+--
+-- Name: templates id; Type: DEFAULT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.templates ALTER COLUMN id SET DEFAULT nextval('public.templates_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Data for Name: documents; Type: TABLE DATA; Schema: public; Owner: x3ron
+--
+
+COPY public.documents (id, owner_id, template_id, title, xml_path, created_at) FROM stdin;
+308	1	17	test	documents/1_test_4494.xml	2025-04-10 18:27:03.122625
+\.
+
+
+--
+-- Data for Name: sessions; Type: TABLE DATA; Schema: public; Owner: x3ron
+--
+
+COPY public.sessions (id, user_id, session_token, expires_at) FROM stdin;
+2	1	GH1CbPVsjkVrZks0zRBuMoEqV3QITD99wQpQsHWvqoufEf8pCMWQE9DMwaZx8yxcZq3zLN0j4LW5d3SJqU25k2SfzhTtF5qoVrU1rfW74dnoQvc29G0GokXut8nBWK2O	2025-04-07 11:46:52.811351
+4	1	ugRBQgw3KYK3sJwhKaLONfEwXuN2wajX8bWoDAnnUA2HlMhQlzQmx4gY8zNMi6REClm3buatPsHB1CNibOm4CJFtNERjcQjsb5eBmdP3d1sM6vE8Dh8B7F8wZNlPMUGt	2025-04-16 17:41:20.029582
+5	1	jNDS8CPOmHtUsZspsu2X3GEsWASAAjHaDxaVBRwg0wR5LvU1dn5mJh0ODXD8xkjxeaPEFaIw5Nl0jbzO6nek6wbLtjnq8tOMvzBXCkmIhuAOsRjHFQh3VENVPcHkOOeS	2025-04-17 09:07:03.203983
+6	3	gT74IhzUcZ8dNB8EE06KmeVwezb6ZfIbfCEa3jklc5g1Fll4OgDfCdn7H5Bk3AkKFbQBPo1cFuOXWtrUGgSgMAfeRZGuF8q5Jec2kIcsj3Dc6j9eJ8cywkPyRw3N0KnM	2025-04-17 09:19:31.709196
+7	2	12ULDJJjuYAtVLjKVIkPmw3YW6FYzIGpLChCDXGNxEtKsbMZgtve3YYTKvT4WHRCT0RdqmkqnMxk4tXFpPDPdL5NnhY4Ei70nUvNj2YzaR6KTHLLFSZyFIVpQKDpsTc5	2025-04-17 09:19:31.835278
+8	3	WwH5B4pNOy75JxHdhNjlyHzMsXZZnS3IM8S3EjVdH5VIiPNzKPU0QZ2jR690qHXMU1W9pKMnC9Jx45E6hYwXzQemeQ4zloAXzBM2VuODAVTyQ1BRrCfc29av6ecUDTbM	2025-04-17 09:19:38.911848
+9	2	Y2KdtoPwk6YuabuypIwxcaroQ4hsxKi9Mzab2JLtEzC9AcKoABteiGoSth0Lu4nEjbnN4bprezd0k79cikkPPFVn224l8PvyknaBX28hBrzcjuOKdPcegt2bT71EhOPf	2025-04-17 09:19:40.01646
+10	3	Wq7yIAt89H9banN6RS97r0FkYx3cqY4JY1GfIN73N0Jtb12O89iFnCmVvx4Xlgz2BFYbWnsYeqDfm0GwhesjwWIci7rAYVD9KJ1HhTR8huKGuk6oAeymTajqjMJxFlFN	2025-04-17 09:19:48.466961
+11	2	eTUnmT5C6qE46YQaCeV9tsFvIiNigViQoRQPYjaZhd2jQQfBUpy7HaCpK9OlbRcqxviwAq7PzcsMET9MVy4hgw1lbzulK4hJrIlGFYTZ6sDEntfX7s2zs0MraRPGSGcX	2025-04-17 09:19:49.980341
+12	3	TKJfsg3OJUu53ghlm4QDAQ6cRC1HBJZCiIIAsKUc3tF9sNmPiNPo6WXnF3HdSsM8muW21gMn0qigBcP93S0IvgXOPyIoqmaaH9HAmiQf9GYFhRbimzENvN2tPNxvFBF0	2025-04-17 09:19:58.015321
+13	2	akFRD5RAUg1tewCGgwJVqPll3NQ6CNpDQ2TcuXeL3AlwsI1NXj1epLgl1SvrKLmxohHJyxz9gSKcHJADkiGmfrDykQdL6lkVzHLzK5snctcR2CI5iarmgJ3n5oe3LOQQ	2025-04-17 09:20:02.251376
+14	3	00eX3LP0ECGzT9vdY3GopqMSzHxuvZWtqTQqnCjyhj3ayVxRTw1DQBt4qv7oseuqrDxXXRMAEz47FgpjBmMbh2KHOkEB02x8vNDqgpG56I3GAsPmPBlqvcGd9BL0l7sR	2025-04-17 09:20:08.545805
+15	2	9pIkVGA4BLthi4rXWbE0OaCJLhAkLgD1tUUh47aEj0O5didkzy6FtGNAs7UdeBYFpvQu8mGaxMqqSIgnwR65CK1lQx7JjrGqj2T9SSMLy0JTUfLEwEIEguhsXmU1cSyA	2025-04-17 09:20:12.428103
+16	3	DrcoWl6IsyAJmz5Q4zDRxdClMdN3TuOJa5BZ1AMYbL4VYhUn4qy1ceN6QlvIZmrn6IeNOyOMahqvIAqR9TR0xcIx3MeRdWOF8EuSo9LVyXftpfsDHDW1ND01hdZfa3Qd	2025-04-17 09:20:19.365042
+17	2	yCouCh8noaIdXqyJbvHD28hINV2isEQY368MM1NC0O11cf5LwSORbdT6fKXtjgppRFDwO5kmIpnur1jO6xYmKdImRpjO40Tqgp3BArRi528Onb4QZCn1YSnBu5IdsNsQ	2025-04-17 09:20:23.226721
+18	3	HSJF26P1yP32C0geyK2xKBKzhlFdfnoWZfn8wmbJmJaLq1cLkLk1V5TZT4ptYCCORk9aQO0CW3BsnMuSSjcPsXVBuWLo8BoJZ7Zo89Eb67C3eYSgGlgDiPZeMFW4Et8T	2025-04-17 09:20:25.19272
+19	15	9lY959mYra7loajDct8TDwHzCCEvJiXqPjH7yVRkti0urx9o8L6IPJyubfYM7h09uy2WcuerUzcNFjylWrAZZOwN0sVX1CMEWXQoZoTGxm7CeQ091fWOVN0Or0ogaOgz	2025-04-17 18:37:24.146613
+20	16	DgAUe8cRA5lPqe3UJDAvFQaE17EYlhii7saD9Vj3t4x8Si1N5VJI6SSjZnLTvOctkMUO9XVFwjXrqvZ3bQAnMFKgAvDtKnvQFCSv0wjKUCW2ScWSrTjjdNKtuoCSZ8oJ	2025-04-17 19:09:24.232079
+21	17	6irLmZxHCfQVykpMTMxWehHFD0kiTaO4AK1iHzD7zzymjZ3uWsyyF5mxasxzEue8G9GxdWi7hSBAPnHaLo8FOP9zozKTRa9pm6M284voLSnQEly5BqN0PdOfcXZPh9ts	2025-04-17 19:09:26.092306
+22	16	Ks1nAPrbEZtEZ4sQukIS8s78LVpEEoDO8kmTJKU8XSSuZAGDWknzZsrB2MOt3kkBJ5pFwQEeYQ7qbtU3zo6r50Dh4VCfKeqKYR1VNh2eeKX1gQKLZJWjaGbqgxIx9YAP	2025-04-17 19:09:33.575108
+23	17	j8y7gr6Yxygnt9SVWXmr7x8f2jFl6tuvdck4VM2QpmhncMhO52D2DsLXVfg4l7xhu8bNMMb6g8jrf5nbF0rwj58EwFCBX1oCxvdfIWKpM2g3Ly7JsH5zzj57qf76Zeka	2025-04-17 19:09:36.945217
+24	16	SEM5fZUUEJHfGho193AKNcj6T9pVohP7AMRxwfLIo7p9IrpQmUTBVVKz37AAYK3yeDfkItDowbju0YW7ZAfgxrY8JF3Id8c8sCJjqa2dQ1vi9ksm0ZXltMb0Cmo8LyAQ	2025-04-17 19:09:42.652231
+25	17	ydr9LYFXxvHpsAu6CWtFIziYTmobT4bang0enP5e0fzOhFaQOL6PmtwxXSyOvnwWmL6kO3EA4VGHq1zZ4XKpIjQYLbW5x3iPFxEsZLvMi9IB9Al1X4H3azd427tk1xWd	2025-04-17 19:09:43.225067
+26	16	3XGvcuPCyvJr3oUPs18cUZXKNYyk38i4goQcyN0g46ZYIuB8Kj0FTtIxSsh1LezPTJyxC67QGHJEhMlJe7E9RjR1WxzUIuAm9lAADkb3cJqcLXKUlUHWZfDc6U38cCoz	2025-04-17 19:09:50.457172
+27	17	eeQ4VCQW5U2zOOGqRJ7tjePICBBEoHZs6aMED4DQecODpLTsZuOmPpDwPRVYSAyMbnineMACaiZKdxFAvMo2PCTGjjRr20yHfOSIS5say6f2Q2yoxQa7ELrM67WC8zxz	2025-04-17 19:09:52.286955
+28	16	ILpwH0gvkIR4bPjFXmpqzNLD9f1AulhSsD9gRlskXQ4ntgKcnZDKdyr9ERIH0FRKH47Jl7e8SVPhBeR09gCAPHfn9H4j8J1SUxXT6MWMAJ8MrPrMdzbn10fGOFFmYDdR	2025-04-17 19:09:57.947462
+29	17	o5SgRKpAXzDxru8DTlLcjNKaF36pUNFuWg16NCp1ysESz96glc3QjaIhrjqBvukCA1uWFp9WruNCIpavgJJum1hMmvEr2IpZfCNzR2RZDaOpX5ldLxEADDJOEajO4jqs	2025-04-17 19:09:59.831218
+30	16	alruZkMJYj5zdMM5E8W5domEfmJtCyLH9MsIekhmubOXORLR4NfPZWoBOgKW3KfKvGoqji0vSG1Z1WDCvjsn5PHvdPQQjINNkHIgI8fZ9vCfd1BN7BmckN3OnpEL3x9n	2025-04-17 19:10:07.919948
+31	17	vx9HFKVzjTOfvZ7TRDQ0cpclNn7KX5LO4lMUDu3BAH5ly8dMwDaqc8znhxqJtcxsD5pCnvsMzWvHlpw7pBM8udeOIXusKUpxeXxsYi1iJn88MuEEJWHZjY76qCjOg8hA	2025-04-17 19:10:09.602797
+32	16	vWlAD41gssgKha2Le2WnY0zcq7liOvjFTokNtHSnJ1pl2Q19XwW4tHwvPSQMSfGm7YuBDKECJqA1zqJhgIxbqJBIxq2tYU6GuGvuKlHZApxHgHyQpVsn1X26NBccPJuD	2025-04-17 19:10:15.862771
+33	17	x2nxy1gbBykps8eZ77cyUf5vUm4vKfCnpfpGAOFt9ZBVmWzJvmZxuKqTPQMzWxC49z7VWb949UyfaJpehe3s3ykOYvWfTKtqFLioh1ME0clUO33snXWMgkA9R1bMMLDo	2025-04-17 19:10:19.58546
+\.
+
+
+--
+-- Data for Name: templates; Type: TABLE DATA; Schema: public; Owner: x3ron
+--
+
+COPY public.templates (id, author_id, title, title_page_path, preview_path, default_font_face, default_font_size, default_indent_left, default_indent_first_line, default_line_spacing, created_at) FROM stdin;
+17	1	экономика	uploads/template_1_экономика_5440.docx	static/previews/template_1_экономика_5440.png	Times New Roman	14	0	0	1.5	2025-04-10 08:45:40.221668
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: x3ron
+--
+
+COPY public.users (id, username, password_hash, email) FROM stdin;
+1	shavuh1n	scrypt:32768:8:1$VrWPJVJLDSAOEVQE$958614c6afaf63a0f1b8fc9d3896093a334c1c51ee0345d9f99cb727984fa2cfee021ec122d9c175aed83cd74564477b6d206da6e95e3825ca383613bbf3d67e	r_x3@bk.ru
+2	user_218	scrypt:32768:8:1$8i2g8DGMB4NNy0hI$783c3c9fe0fc30249990ca3e83a67bbafb4f70903b997371b58b139d0ac1bfba61cf1e33ac3bb5b276cda1ee0d34c1c3b65a0ea6308912df487ae64496e37385	user_218@example.com
+3	user_9809	scrypt:32768:8:1$X7zEatyNnSwYLQGK$e600d66b6ed4a4fb9194af4c5df77b00bb8a9198184f0f3ca66106440ac97a78510346ef45c98459de307726e38b0c076c108cc4b83736f38c56c66cd80d11a4	user_9809@example.com
+15	shavuh2n	scrypt:32768:8:1$2wLBggvrazIxdWCy$5d2aadf82dca7b65ac8cdae433613463f4c06a413153ee1f24b89829bd4bb92ed77ed01ab96ba16b4d026f0a9f57ea79f84a07fbd0d937ab225308657e4cb9ee	r_x2@bk.ru
+16	user_8046	scrypt:32768:8:1$WXahKbxemh4T5TQV$5da633e120daa399a934f8b9f4dc2d6569bce39382ab9fb6fe7c8b09e2b10823c995993420dd9aa9f68b8956dc3c12c6c195264c2d24f81ba19fe5f4adf39b45	user_8046@example.com
+17	user_4044	scrypt:32768:8:1$flvR9RvVtsSuTec6$b414c03be4b9e07be893c800313881ab53c5152f76e8798e412aaa29d9fe7d463f7284f66f43912fce6c9311591afbcee4d86a8880f16f74f8c3d9cd29610f43	user_4044@example.com
+\.
+
+
+--
+-- Name: documents_id_seq; Type: SEQUENCE SET; Schema: public; Owner: x3ron
+--
+
+SELECT pg_catalog.setval('public.documents_id_seq', 308, true);
+
+
+--
+-- Name: sessions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: x3ron
+--
+
+SELECT pg_catalog.setval('public.sessions_id_seq', 33, true);
+
+
+--
+-- Name: templates_id_seq; Type: SEQUENCE SET; Schema: public; Owner: x3ron
+--
+
+SELECT pg_catalog.setval('public.templates_id_seq', 17, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: x3ron
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 29, true);
+
+
+--
+-- Name: documents documents_pkey; Type: CONSTRAINT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.documents
+    ADD CONSTRAINT documents_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.sessions
+    ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sessions sessions_session_token_key; Type: CONSTRAINT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.sessions
+    ADD CONSTRAINT sessions_session_token_key UNIQUE (session_token);
+
+
+--
+-- Name: templates templates_pkey; Type: CONSTRAINT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.templates
+    ADD CONSTRAINT templates_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_key UNIQUE (email);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_username_key; Type: CONSTRAINT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_username_key UNIQUE (username);
+
+
+--
+-- Name: documents documents_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.documents
+    ADD CONSTRAINT documents_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.users(id);
+
+
+--
+-- Name: documents documents_template_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.documents
+    ADD CONSTRAINT documents_template_id_fkey FOREIGN KEY (template_id) REFERENCES public.templates(id);
+
+
+--
+-- Name: sessions sessions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.sessions
+    ADD CONSTRAINT sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: templates templates_author_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: x3ron
+--
+
+ALTER TABLE ONLY public.templates
+    ADD CONSTRAINT templates_author_id_fkey FOREIGN KEY (author_id) REFERENCES public.users(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
