@@ -1,6 +1,7 @@
 let blockCount = 0;
 const dropZone = document.getElementById('dropZone');
-let isDropping = false; // Защита от многократного вызова drop
+const toc = document.getElementById('toc');
+let isDropping = false;
 
 function drag(event) {
     event.dataTransfer.setData("text", event.target.getAttribute('data-type'));
@@ -13,29 +14,85 @@ function dragBlock(event) {
 
 function allowDrop(event) {
     event.preventDefault();
+    const target = event.target.closest('.block') || dropZone;
+    const rect = target.getBoundingClientRect();
+    const y = event.clientY;
+
+    document.querySelectorAll('.block.insert-before, .block.insert-after, .drop-zone.insert-before')
+        .forEach(el => el.classList.remove('insert-before', 'insert-after'));
+
+    if (target === dropZone && dropZone.children.length === 0) {
+        dropZone.classList.add('insert-before');
+    } else if (target.classList.contains('block')) {
+        if (y < rect.top + rect.height / 2) {
+            target.classList.add('insert-before');
+        } else {
+            target.classList.add('insert-after');
+        }
+    }
 }
 
 function drop(event) {
     event.preventDefault();
-    event.stopPropagation(); // Останавливаем всплытие события
-    if (isDropping) return; // Предотвращаем множественные вызовы
+    event.stopPropagation();
+    if (isDropping) return;
     isDropping = true;
+
+    document.querySelectorAll('.block.insert-before, .block.insert-after, .drop-zone.insert-before')
+        .forEach(el => el.classList.remove('insert-before', 'insert-after'));
+
     const data = event.dataTransfer.getData("text");
     console.log(`Dropped type: ${data}`);
-    // Проверяем, что dropZone является целевым элементом
-    if (event.target.closest('#dropZone') !== dropZone) {
-        isDropping = false;
-        return;
-    }
+    
+    let targetElement = event.target.closest('.block');
+    const isDropZone = event.target === dropZone || event.target.closest('#dropZone') === dropZone;
+    const rect = targetElement ? targetElement.getBoundingClientRect() : null;
+    const y = event.clientY;
+
+    document.querySelectorAll('.block.drag-over').forEach(el => el.classList.remove('drag-over'));
+
     if (data.startsWith('block_')) {
         const block = document.getElementById(data);
-        dropZone.appendChild(block);
+        if (block === targetElement) {
+            isDropping = false;
+            return;
+        }
+        if (isDropZone && !targetElement) {
+            dropZone.appendChild(block);
+        } else if (targetElement) {
+            if (y < rect.top + rect.height / 2) {
+                targetElement.parentNode.insertBefore(block, targetElement);
+            } else {
+                targetElement.parentNode.insertBefore(block, targetElement.nextSibling);
+            }
+        }
+        updateTOC();
         saveTemplate();
     } else {
-        addBlock(data);
+        const block = addBlock(data);
+        if (isDropZone && !targetElement) {
+            dropZone.appendChild(block);
+        } else if (targetElement) {
+            if (y < rect.top + rect.height / 2) {
+                targetElement.parentNode.insertBefore(block, targetElement);
+            } else {
+                targetElement.parentNode.insertBefore(block, targetElement.nextSibling);
+            }
+        }
+        updateTOC();
         saveTemplate();
     }
     isDropping = false;
+}
+
+function validateListNumber(input) {
+    const value = input.value;
+    if (!/^\d+(\.\d+)*$/.test(value)) {
+        input.classList.add('invalid');
+    } else {
+        input.classList.remove('invalid');
+        saveTemplate();
+    }
 }
 
 function addBlock(type, parentId = null, itemId = null) {
@@ -45,32 +102,17 @@ function addBlock(type, parentId = null, itemId = null) {
     block.id = `block_${blockCount++}`;
     block.ondragstart = dragBlock;
     block.ondragover = allowDrop;
-    block.ondrop = parentId ? (e) => dropNested(e, parentId, itemId) : drop;
+    block.ondrop = drop;
     block.ondragend = () => block.classList.remove('dragging');
 
     let html = `<input type="hidden" name="block_type[]" value="${type}">`;
     console.log(`Adding block of type: ${type}, id: ${block.id}`);
     
-    if (type === 'numbered_list') {
-        html += `
-            <div class="list-container">
-                <div class="list-items" id="list_items_${block.id}"></div>
-                <button type="button" onclick="addListItem('${block.id}')">Добавить элемент</button>
-            </div>
-        `;
-    } else if (type === 'list_item') {
-        html += `
-            <input type="text" name="list_item_title[]" class="list-item-title" placeholder="Название элемента" oninput="saveTemplate()">
-            <input type="hidden" name="list_item_parent_${blockCount - 1}" value="${parentId}">
-            <div class="list-drop-zone" id="list_drop_${block.id}" ondragover="allowDrop(event)" ondrop="dropNested(event, '${parentId}', '${block.id}')"></div>
-            <button type="button" onclick="removeBlock('${block.id}')">Удалить элемент</button>
-        `;
-    } else if (type === 'text') {
+    if (type === 'text') {
         const contentIdx = blockCount - 1;
         html += `
             <div class="contenteditable" contenteditable="true" style="font-family: 'Times New Roman'; font-size: 14px;"></div>
             <input type="hidden" name="content[]" id="content_${block.id}">
-            ${parentId && itemId ? `<input type="hidden" name="content_parent_${contentIdx}" value="${itemId}">` : ''}
             <input type="hidden" name="align[]" value="justify" id="align_${block.id}">
             <input type="hidden" name="indent_left[]" value="0" id="indent_left_${block.id}">
             <input type="hidden" name="indent_first_line[]" value="0" id="indent_first_line_${block.id}">
@@ -78,24 +120,62 @@ function addBlock(type, parentId = null, itemId = null) {
             <input type="hidden" name="face_block_${contentIdx}" id="face_${block.id}" value="Times New Roman">
             <input type="hidden" name="size_block_${contentIdx}" id="size_${block.id}" value="14">
             <div class="style-menu">
-                <label><input type="checkbox" onchange="updateStyle('${block.id}', 'bold', this.checked)"> Жирный</label>
-                <label>Размер: <input type="number" min="8" max="72" value="14" onchange="updateStyle('${block.id}', 'size', this.value)"></label>
-                <label>Шрифт: <select onchange="updateStyle('${block.id}', 'face', this.value)">
+                <label>Размер: <input type="number" min="8" max="72" value="14" oninput="updateStyle('${block.id}', 'size', this.value); saveTemplate()"></label>
+                <label>Шрифт: <select oninput="updateStyle('${block.id}', 'face', this.value); saveTemplate()">
                     <option value="Times New Roman" selected>Times New Roman</option>
                     <option value="Arial">Arial</option>
                     <option value="Calibri">Calibri</option>
                 </select></label>
-                <label>Цвет: <input type="color" value="#000000" onchange="updateStyle('${block.id}', 'color', this.value.slice(1))"></label>
-                <label>Выравнивание: <select onchange="updateStyle('${block.id}', 'align', this.value)">
+                <label>Цвет: <input type="color" value="#000000" oninput="updateStyle('${block.id}', 'color', this.value.slice(1)); saveTemplate()"></label>
+                <label>Выравнивание: <select oninput="updateStyle('${block.id}', 'align', this.value); saveTemplate()">
                     <option value="left">Слева</option>
                     <option value="center">По центру</option>
                     <option value="right">Справа</option>
                     <option value="justify" selected>По ширине</option>
                 </select></label>
-                <label>Отступ слева (см): <input type="number" min="0" step="0.1" value="0" onchange="updateIndent('${block.id}', 'indent_left', this.value)"></label>
-                <label>Первая строка (см): <input type="number" min="0" step="0.1" value="0" onchange="updateIndent('${block.id}', 'indent_first_line', this.value)"></label>
-                <label>Междустрочный: <input type="number" min="0.5" step="0.1" value="1.5" onchange="updateIndent('${block.id}', 'line_spacing', this.value)"></label>
+                <label>Отступ слева (см): <input type="number" min="0" step="0.01" value="0" class="indent-input" data-block-id="${block.id}" data-property="indent_left"></label>
+                <label>Первая строка (см): <input type="number" min="0" step="0.01" value="0" class="indent-input" data-block-id="${block.id}" data-property="indent_first_line"></label>
+                <label>Междустрочный: <input type="number" min="0.5" step="0.01" value="1.5" class="indent-input" data-block-id="${block.id}" data-property="line_spacing"></label>
             </div>
+        `;
+    } else if (type === 'list_item') {
+        const contentIdx = blockCount - 1;
+        html += `
+            <div class="list-item-container">
+                <input type="text" name="list_item_number[]" class="list-item-number" placeholder="1.2.3" pattern="\\d+(\\.\\d+)*" oninput="validateListNumber(this)">
+                <div class="contenteditable" contenteditable="true" style="font-family: 'Times New Roman'; font-size: 14px;"></div>
+            </div>
+            <input type="hidden" name="content[]" id="content_${block.id}">
+            <input type="hidden" name="align[]" value="justify" id="align_${block.id}">
+            <input type="hidden" name="indent_left[]" value="0" id="indent_left_${block.id}">
+            <input type="hidden" name="indent_first_line[]" value="0" id="indent_first_line_${block.id}">
+            <input type="hidden" name="line_spacing[]" value="1.5" id="line_spacing_${block.id}">
+            <input type="hidden" name="face_block_${contentIdx}" id="face_${block.id}" value="Times New Roman">
+            <input type="hidden" name="size_block_${contentIdx}" id="size_${block.id}" value="14">
+            <div class="style-menu">
+                <label>Размер: <input type="number" min="8" max="72" value="14" oninput="updateStyle('${block.id}', 'size', this.value); saveTemplate()"></label>
+                <label>Шрифт: <select oninput="updateStyle('${block.id}', 'face', this.value); saveTemplate()">
+                    <option value="Times New Roman" selected>Times New Roman</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Calibri">Calibri</option>
+                </select></label>
+                <label>Цвет: <input type="color" value="#000000" oninput="updateStyle('${block.id}', 'color', this.value.slice(1)); saveTemplate()"></label>
+                <label>Выравнивание: <select oninput="updateStyle('${block.id}', 'align', this.value); saveTemplate()">
+                    <option value="left">Слева</option>
+                    <option value="center">По центру</option>
+                    <option value="right">Справа</option>
+                    <option value="justify" selected>По ширине</option>
+                </select></label>
+                <label>Отступ слева (см): <input type="number" min="0" step="0.01" value="0" class="indent-input" data-block-id="${block.id}" data-property="indent_left"></label>
+                <label>Первая строка (см): <input type="number" min="0" step="0.01" value="0" class="indent-input" data-block-id="${block.id}" data-property="indent_first_line"></label>
+                <label>Междустрочный: <input type="number" min="0.5" step="0.01" value="1.5" class="indent-input" data-block-id="${block.id}" data-property="line_spacing"></label>
+            </div>
+        `;
+    } else if (type === 'comment') {
+        const contentIdx = blockCount - 1;
+        html += `
+            <div class="contenteditable" contenteditable="true" style="font-family: 'Times New Roman'; font-size: 14px; background-color: #f0f0f0; padding: 10px; border-left: 4px solid #ccc;"></div>
+            <input type="hidden" name="content[]" id="content_${block.id}">
         `;
     } else if (type === 'table') {
         html += `
@@ -104,7 +184,7 @@ function addBlock(type, parentId = null, itemId = null) {
         `;
     } else if (type === 'image') {
         html += `
-            <input type="file" name="image[]" accept="image/*" onchange="previewImage(this, '${block.id}')">
+            <input type="file" name="image[]" accept="image/jpeg,image/png,image/gif,image/bmp" onchange="previewImage(this, '${block.id}')">
             <input type="hidden" name="image_path[]" id="image_path_${block.id}">
             <img id="preview_${block.id}" class="image-preview" style="display: none;">
             <label>Подпись: <input type="text" name="image_caption[]" id="caption_${block.id}" oninput="saveTemplate()"></label>
@@ -124,50 +204,71 @@ function addBlock(type, parentId = null, itemId = null) {
     html += `<button type="button" onclick="removeBlock('${block.id}')">Удалить</button>`;
     block.innerHTML = html;
 
-    if (parentId && itemId) {
-        document.getElementById(`list_drop_${itemId}`).appendChild(block);
-    } else if (parentId) {
-        document.getElementById(`list_items_${parentId}`).appendChild(block);
-    } else {
-        dropZone.appendChild(block);
-    }
-
-    if (type === 'text') {
+    if (type === 'text' || type === 'list_item' || type === 'comment') {
         const editable = block.querySelector('.contenteditable');
         editable.addEventListener('input', () => {
             block.querySelector(`#content_${block.id}`).value = editable.innerHTML;
+            updateTOC();
             saveTemplate();
         });
     }
-}
 
-function addListItem(listId) {
-    addBlock('list_item', listId);
-    const listBlock = document.getElementById(listId);
-    const itemBlock = listBlock.querySelector('.list-items').lastElementChild;
-    const nestedBtn = document.createElement('button');
-    nestedBtn.type = 'button';
-    nestedBtn.textContent = 'Добавить вложенный текст';
-    nestedBtn.onclick = () => {
-        addBlock('text', listId, itemBlock.id);
-        saveTemplate();
-    };
-    itemBlock.appendChild(nestedBtn);
-    saveTemplate();
+    if (type === 'text' || type === 'list_item') {
+        const indentInputs = block.querySelectorAll('.indent-input');
+        indentInputs.forEach(input => {
+            const blockId = input.dataset.blockId;
+            const property = input.dataset.property;
+            input.addEventListener('change', () => {
+                updateIndent(blockId, property, input.value);
+                saveTemplate();
+            });
+            input.addEventListener('input', (e) => {
+                const oldValue = parseFloat(block.querySelector(`#${property}_${blockId}`).value) || 0;
+                const newValue = parseFloat(e.target.value) || 0;
+                if (Math.abs(newValue - oldValue) === parseFloat(e.target.step)) {
+                    updateIndent(blockId, property, e.target.value);
+                    saveTemplate();
+                }
+            });
+        });
+    }
+
+    return block;
 }
 
 function removeBlock(blockId) {
     const block = document.getElementById(blockId);
-    block.remove();
-    saveTemplate();
+    if (!block) return;
+
+    block.classList.add('removing');
+
+    const rect = block.getBoundingClientRect();
+    const particleCount = 20;
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        const x = rect.width * Math.random();
+        const y = rect.height * Math.random();
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        const tx = (Math.random() - 0.5) * 100;
+        const ty = (Math.random() - 0.5) * 100;
+        particle.style.setProperty('--tx', `${tx}px`);
+        particle.style.setProperty('--ty', `${ty}px`);
+        block.appendChild(particle);
+    }
+
+    setTimeout(() => {
+        block.remove();
+        updateTOC();
+        saveTemplate();
+    }, 800);
 }
 
 function updateStyle(blockId, property, value) {
     const block = document.getElementById(blockId);
     const editable = block.querySelector('.contenteditable');
-    if (property === 'bold') {
-        editable.style.fontWeight = value ? 'bold' : 'normal';
-    } else if (property === 'size') {
+    if (property === 'size') {
         editable.style.fontSize = `${value}px`;
         block.querySelector(`#size_${blockId}`).value = value;
     } else if (property === 'face') {
@@ -180,20 +281,49 @@ function updateStyle(blockId, property, value) {
         block.querySelector(`#align_${blockId}`).value = value;
     }
     block.querySelector(`#content_${blockId}`).value = editable.innerHTML;
+    updateTOC();
     saveTemplate();
 }
 
 function updateIndent(blockId, property, value) {
-    document.getElementById(`${property}_${blockId}`).value = value;
-    saveTemplate();
+    const block = document.getElementById(blockId);
+    const input = block.querySelector(`#${property}_${blockId}`);
+    const styleInput = block.querySelector(`input[data-property="${property}"][data-block-id="${blockId}"]`);
+    if (input && styleInput) {
+        input.value = value;
+        styleInput.value = value;
+        const editable = block.querySelector('.contenteditable');
+        if (editable) {
+            if (property === 'indent_left') {
+                editable.style.marginLeft = `${value * 10}px`;
+            } else if (property === 'indent_first_line') {
+                editable.style.textIndent = `${value * 10}px`;
+            } else if (property === 'line_spacing') {
+                editable.style.lineHeight = value;
+            }
+        }
+    }
 }
 
 function previewImage(input, blockId) {
     const preview = document.getElementById(`preview_${blockId}`);
     const pathInput = document.getElementById(`image_path_${blockId}`);
     if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const maxSize = 10 * 1024 * 1024; // 10 МБ
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Недопустимый формат файла. Поддерживаются: JPEG, PNG, GIF, BMP.');
+            input.value = '';
+            return;
+        }
+        if (file.size > maxSize) {
+            alert('Файл слишком большой. Максимальный размер: 10 МБ.');
+            input.value = '';
+            return;
+        }
         const formData = new FormData();
-        formData.append('image', input.files[0]);
+        formData.append('image', file);
         fetch('/upload_image', {
             method: 'POST',
             body: formData
@@ -205,26 +335,40 @@ function previewImage(input, blockId) {
                 preview.style.display = 'block';
                 pathInput.value = data.path;
                 saveTemplate();
+            } else if (data.error) {
+                alert(data.error);
+                input.value = '';
             }
         })
-        .catch(error => console.error('Ошибка загрузки изображения:', error));
+        .catch(error => {
+            console.error('Ошибка загрузки изображения:', error);
+            alert('Ошибка загрузки изображения');
+            input.value = '';
+        });
     }
 }
 
-function dropNested(event, parentId, itemId) {
-    event.preventDefault();
-    event.stopPropagation(); // Останавливаем всплытие для вложенных зон
-    if (isDropping) return;
-    isDropping = true;
-    const data = event.dataTransfer.getData("text");
-    if (data.startsWith('block_')) {
-        const block = document.getElementById(data);
-        document.getElementById(`list_drop_${itemId}`).appendChild(block);
-    } else {
-        addBlock(data, parentId, itemId);
-    }
-    saveTemplate();
-    isDropping = false;
+function updateTOC() {
+    toc.innerHTML = '';
+    const blocks = dropZone.querySelectorAll('.block');
+    let commentIndex = 1;
+    blocks.forEach(block => {
+        const blockType = block.querySelector('input[name="block_type[]"]').value;
+        if (blockType === 'comment') {
+            const content = block.querySelector('.contenteditable').innerText || `Комментарий ${commentIndex}`;
+            const shortContent = content.length > 30 ? content.substring(0, 27) + '...' : content;
+            const tocItem = document.createElement('div');
+            tocItem.className = 'toc-item';
+            tocItem.innerText = shortContent;
+            tocItem.onclick = () => {
+                block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                block.classList.add('highlight');
+                setTimeout(() => block.classList.remove('highlight'), 1000);
+            };
+            toc.appendChild(tocItem);
+            commentIndex++;
+        }
+    });
 }
 
 let isSaving = false;
@@ -276,79 +420,49 @@ if (docId && docId !== '0') {
         .then(response => response.json())
         .then(data => {
             console.log('Loaded template data:', data);
-            dropZone.innerHTML = ''; // Очищаем dropZone
-            blockCount = 0; // Сбрасываем счетчик
-            let contentIdx = 0;
-            let listItemIdx = 0;
+            dropZone.innerHTML = '';
+            blockCount = 0;
             data.blocks.forEach((type, blockIdx) => {
-                if (type === 'numbered_list') {
-                    addBlock('numbered_list');
-                    const block = document.getElementById(`block_${blockCount - 1}`);
-                    while (listItemIdx < data.list_item_titles.length && (blockIdx + 1 < data.blocks.length && data.blocks[blockIdx + 1] === 'list_item')) {
-                        addListItem(block.id);
-                        const itemBlock = document.getElementById(`block_${blockCount - 1}`);
-                        itemBlock.querySelector('.list-item-title').value = data.list_item_titles[listItemIdx] || "";
-                        blockIdx++;
-                        while (blockIdx < data.blocks.length && data.blocks[blockIdx] === 'text' && data.content_parents && data.content_parents[contentIdx] === `block_${blockCount - 1}`) {
-                            addBlock('text', block.id, itemBlock.id);
-                            const nestedBlock = document.getElementById(`block_${blockCount - 1}`);
-                            nestedBlock.querySelector('.contenteditable').innerHTML = data.contents[contentIdx] || "";
-                            nestedBlock.querySelector(`#content_${nestedBlock.id}`).value = data.contents[contentIdx] || "";
-                            nestedBlock.querySelector(`#align_${nestedBlock.id}`).value = data.aligns[contentIdx] || 'justify';
-                            nestedBlock.querySelector(`select[onchange*="align"]`).value = data.aligns[contentIdx] || 'justify';
-                            nestedBlock.querySelector(`#indent_left_${nestedBlock.id}`).value = data.indents_left[contentIdx] || '0';
-                            nestedBlock.querySelector(`input[onchange*="indent_left"]`).value = data.indents_left[contentIdx] || '0';
-                            nestedBlock.querySelector(`#indent_first_line_${nestedBlock.id}`).value = data.indents_first_line[contentIdx] || '0';
-                            nestedBlock.querySelector(`input[onchange*="indent_first_line"]`).value = data.indents_first_line[contentIdx] || '0';
-                            nestedBlock.querySelector(`#line_spacing_${nestedBlock.id}`).value = data.line_spacings[contentIdx] || '1.5';
-                            nestedBlock.querySelector(`input[onchange*="line_spacing"]`).value = data.line_spacings[contentIdx] || '1.5';
-                            nestedBlock.querySelector(`#face_${nestedBlock.id}`).value = data.font_faces[contentIdx] || 'Times New Roman';
-                            nestedBlock.querySelector('.contenteditable').style.fontFamily = data.font_faces[contentIdx] || 'Times New Roman';
-                            nestedBlock.querySelector(`select[onchange*="face"]`).value = data.font_faces[contentIdx] || 'Times New Roman';
-                            nestedBlock.querySelector(`#size_${nestedBlock.id}`).value = data.font_sizes[contentIdx] || '14';
-                            nestedBlock.querySelector('.contenteditable').style.fontSize = `${data.font_sizes[contentIdx] || 14}px`;
-                            nestedBlock.querySelector(`input[onchange*="size"]`).value = data.font_sizes[contentIdx] || '14';
-                            contentIdx++;
-                            blockIdx++;
-                        }
-                        listItemIdx++;
+                const block = addBlock(type);
+                dropZone.appendChild(block);
+                if (type === 'text' || type === 'list_item') {
+                    const editable = block.querySelector('.contenteditable');
+                    editable.innerHTML = data.contents[blockIdx] || "";
+                    block.querySelector(`#content_${block.id}`).value = data.contents[blockIdx] || "";
+                    block.querySelector(`#align_${block.id}`).value = data.aligns[blockIdx] || 'justify';
+                    block.querySelector(`select[oninput*="align"]`).value = data.aligns[blockIdx] || 'justify';
+                    block.querySelector(`#indent_left_${block.id}`).value = data.indents_left[blockIdx] || '0';
+                    block.querySelector(`input[data-property="indent_left"]`).value = data.indents_left[blockIdx] || '0';
+                    block.querySelector(`#indent_first_line_${block.id}`).value = data.indents_first_line[blockIdx] || '0';
+                    block.querySelector(`input[data-property="indent_first_line"]`).value = data.indents_first_line[blockIdx] || '0';
+                    block.querySelector(`#line_spacing_${block.id}`).value = data.line_spacings[blockIdx] || '1.5';
+                    block.querySelector(`input[data-property="line_spacing"]`).value = data.line_spacings[blockIdx] || '1.5';
+                    block.querySelector(`#face_${block.id}`).value = data.font_faces[blockIdx] || 'Times New Roman';
+                    editable.style.fontFamily = data.font_faces[blockIdx] || 'Times New Roman';
+                    block.querySelector(`select[oninput*="face"]`).value = data.font_faces[blockIdx] || 'Times New Roman';
+                    block.querySelector(`#size_${block.id}`).value = data.font_sizes[blockIdx] || '14';
+                    editable.style.fontSize = `${data.font_sizes[blockIdx] || 14}px`;
+                    block.querySelector(`input[oninput*="size"]`).value = data.font_sizes[blockIdx] || '14';
+                    if (type === 'list_item' && blockIdx < data.list_item_numbers.length) {
+                        block.querySelector('.list-item-number').value = data.list_item_numbers[blockIdx] || "1";
                     }
-                } else {
-                    addBlock(type);
-                    const block = document.getElementById(`block_${blockCount - 1}`);
-                    if (type === 'text') {
-                        const editable = block.querySelector('.contenteditable');
-                        editable.innerHTML = data.contents[contentIdx] || "";
-                        block.querySelector(`#content_${block.id}`).value = data.contents[contentIdx] || "";
-                        block.querySelector(`#align_${block.id}`).value = data.aligns[contentIdx] || 'justify';
-                        block.querySelector(`select[onchange*="align"]`).value = data.aligns[contentIdx] || 'justify';
-                        block.querySelector(`#indent_left_${block.id}`).value = data.indents_left[contentIdx] || '0';
-                        block.querySelector(`input[onchange*="indent_left"]`).value = data.indents_left[contentIdx] || '0';
-                        block.querySelector(`#indent_first_line_${block.id}`).value = data.indents_first_line[contentIdx] || '0';
-                        block.querySelector(`input[onchange*="indent_first_line"]`).value = data.indents_first_line[contentIdx] || '0';
-                        block.querySelector(`#line_spacing_${block.id}`).value = data.line_spacings[contentIdx] || '1.5';
-                        block.querySelector(`input[onchange*="line_spacing"]`).value = data.line_spacings[contentIdx] || '1.5';
-                        block.querySelector(`#face_${block.id}`).value = data.font_faces[contentIdx] || 'Times New Roman';
-                        editable.style.fontFamily = data.font_faces[contentIdx] || 'Times New Roman';
-                        block.querySelector(`select[onchange*="face"]`).value = data.font_faces[contentIdx] || 'Times New Roman';
-                        block.querySelector(`#size_${block.id}`).value = data.font_sizes[contentIdx] || '14';
-                        editable.style.fontSize = `${data.font_sizes[contentIdx] || 14}px`;
-                        block.querySelector(`input[onchange*="size"]`).value = data.font_sizes[contentIdx] || '14';
-                        contentIdx++;
-                    } else if (type === 'table') {
-                        block.querySelector('textarea').value = data.contents[contentIdx] || "";
-                        block.querySelector('input[name="col_widths"]').value = data.col_widths || '2,1,2';
-                        contentIdx++;
-                    } else if (type === 'image') {
-                        block.querySelector(`#caption_${block.id}`).value = data.captions[blockIdx] || "";
-                        if (data.paths[blockIdx]) {
-                            block.querySelector(`#preview_${block.id}`).src = data.paths[blockIdx];
-                            block.querySelector(`#preview_${block.id}`).style.display = 'block';
-                            block.querySelector(`#image_path_${block.id}`).value = data.paths[blockIdx];
-                        }
+                } else if (type === 'comment') {
+                    const editable = block.querySelector('.contenteditable');
+                    editable.innerHTML = data.contents[blockIdx] || "";
+                    block.querySelector(`#content_${block.id}`).value = data.contents[blockIdx] || "";
+                } else if (type === 'table') {
+                    block.querySelector('textarea').value = data.contents[blockIdx] || "";
+                    block.querySelector('input[name="col_widths"]').value = data.col_widths[blockIdx] || '2,1,2';
+                } else if (type === 'image') {
+                    block.querySelector(`#caption_${block.id}`).value = data.captions[blockIdx] || "";
+                    if (data.paths[blockIdx]) {
+                        block.querySelector(`#preview_${block.id}`).src = data.paths[blockIdx];
+                        block.querySelector(`#preview_${block.id}`).style.display = 'block';
+                        block.querySelector(`#image_path_${block.id}`).value = data.paths[blockIdx];
                     }
                 }
             });
+            updateTOC();
         })
         .catch(error => console.error('Ошибка загрузки документа:', error));
 }

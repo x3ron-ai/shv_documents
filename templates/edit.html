@@ -38,15 +38,12 @@
         <aside class="sidebar">
             <h3>Добавить блок</h3>
             <div class="block-option" draggable="true" ondragstart="drag(event)" data-type="text">Текст</div>
+            <div class="block-option" draggable="true" ondragstart="drag(event)" data-type="list_item">Элемент списка</div>
+            <div class="block-option" draggable="true" ondragstart="drag(event)" data-type="comment">Комментарий</div>
             <div class="block-option" draggable="true" ondragstart="drag(event)" data-type="table">Таблица</div>
-            <div class="block-option" draggable="false" ondragstart="drag(event)" data-type="numbered_list">Нумерованный список (в разработке)</div>
             <div class="block-option" draggable="true" ondragstart="drag(event)" data-type="image">Изображение</div>
-            <h3>Отступы текста</h3>
-            <div class="indent-options">
-                <label>Слева (см): <input type="number" name="indent_left" min="0" step="0.01" value="0"></label>
-                <label>Первая строка (см): <input type="number" name="indent_first_line" min="0" step="0.01" value="0"></label>
-                <label>Междустрочный: <input type="number" name="line_spacing" min="0.5" step="0.01" value="1.5"></label>
-            </div>
+            <h3>Оглавление</h3>
+            <div id="toc" class="toc"></div>
         </aside>
     </div>
     <footer class="footer">

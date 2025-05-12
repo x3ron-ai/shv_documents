@@ -27,36 +27,23 @@ class XMLToWordParser:
 
     def _add_list_styles(self):
         styles = self.doc.styles
-        if 'List Bullet' not in styles:
-            bullet_style = styles.add_style('List Bullet', WD_STYLE_TYPE.PARAGRAPH)
-            bullet_style.font.name = 'Times New Roman'
-            bullet_style.font.size = Pt(12)
-            bullet_style.paragraph_format.left_indent = Inches(0.5)
-            bullet_style.paragraph_format.first_line_indent = Inches(-0.25)
-            bullet_p = bullet_style._element.get_or_add_pPr()
-            numPr = OxmlElement('w:numPr')
-            ilvl = OxmlElement('w:ilvl')
-            ilvl.set(ns.qn('w:val'), '0')
-            numId = OxmlElement('w:numId')
-            numId.set(ns.qn('w:val'), '1')
-            numPr.append(ilvl)
-            numPr.append(numId)
-            bullet_p.append(numPr)
-        if 'List Number' not in styles:
-            number_style = styles.add_style('List Number', WD_STYLE_TYPE.PARAGRAPH)
-            number_style.font.name = 'Times New Roman'
-            number_style.font.size = Pt(12)
-            number_style.paragraph_format.left_indent = Inches(0.5)
-            number_style.paragraph_format.first_line_indent = Inches(-0.25)
-            number_p = number_style._element.get_or_add_pPr()
-            numPr = OxmlElement('w:numPr')
-            ilvl = OxmlElement('w:ilvl')
-            ilvl.set(ns.qn('w:val'), '0')
-            numId = OxmlElement('w:numId')
-            numId.set(ns.qn('w:val'), '2')
-            numPr.append(ilvl)
-            numPr.append(numId)
-            number_p.append(numPr)
+        for level in range(5):
+            style_name = f'List Number {level + 1}'
+            if style_name not in styles:
+                number_style = styles.add_style(style_name, WD_STYLE_TYPE.PARAGRAPH)
+                number_style.font.name = 'Times New Roman'
+                number_style.font.size = Pt(14)
+                number_style.paragraph_format.left_indent = Inches(0)
+                number_style.paragraph_format.first_line_indent = Inches(0)
+                number_p = number_style._element.get_or_add_pPr()
+                numPr = OxmlElement('w:numPr')
+                ilvl = OxmlElement('w:ilvl')
+                ilvl.set(ns.qn('w:val'), str(level))
+                numId = OxmlElement('w:numId')
+                numId.set(ns.qn('w:val'), str(2 + level))
+                numPr.append(ilvl)
+                numPr.append(numId)
+                number_p.append(numPr)
 
     def parse_and_convert(self):
         try:
@@ -67,10 +54,12 @@ class XMLToWordParser:
             for element in root:
                 if element.tag == "text":
                     self._add_text(element)
+                elif element.tag == "list_item":
+                    self._add_list_item(element)
+                elif element.tag == "comment":
+                    continue
                 elif element.tag == "table":
                     self._add_table(element)
-                elif element.tag == "list":
-                    self._add_list(element)
                 elif element.tag == "image":
                     self._add_image(element)
             self.doc.save(self.output_path)
@@ -124,6 +113,57 @@ class XMLToWordParser:
                         run.font.name = font_face
                         run.font.color.rgb = RGBColor(*font_color)
 
+    def _add_list_item(self, list_item_element):
+        text = list_item_element.text.strip() if list_item_element.text else ""
+        alignment = list_item_element.get("align", "justify")
+        indent_left_cm = float(list_item_element.get("indent_left", "0"))
+        indent_first_line_cm = float(list_item_element.get("indent_first_line", "0"))
+        line_spacing = float(list_item_element.get("line_spacing", "1.5"))
+        font_face = list_item_element.get("font_face", "Times New Roman")
+        font_size = int(list_item_element.get("font_size", "14"))
+        list_item_number = list_item_element.get("list_item_number", "1")
+        level = len(list_item_element.get("list_item_number", "1").split('.')) - 1
+        level = min(level, 4)
+
+        style_name = f'List Number {level + 1}'
+        if text:
+            paragraph = self.doc.add_paragraph()
+            paragraph.style = style_name
+            paragraph.paragraph_format.left_indent = Inches(indent_left_cm * 0.393701)
+            paragraph.paragraph_format.first_line_indent = Inches(indent_first_line_cm * 0.393701)
+            paragraph.paragraph_format.line_spacing = line_spacing
+            paragraph.paragraph_format.alignment = {
+                "left": WD_ALIGN_PARAGRAPH.LEFT,
+                "center": WD_ALIGN_PARAGRAPH.CENTER,
+                "right": WD_ALIGN_PARAGRAPH.RIGHT,
+                "justify": WD_ALIGN_PARAGRAPH.JUSTIFY
+            }.get(alignment, WD_ALIGN_PARAGRAPH.JUSTIFY)
+            parts = re.split(r'(<[^>]+>)', text)
+            bold = False
+            font_color = (0, 0, 0)
+            for part in parts:
+                if part.startswith('<') and part.endswith('>'):
+                    if part == '<b>':
+                        bold = True
+                    elif part == '</b>':
+                        bold = False
+                    elif part.startswith('<font'):
+                        attrs = re.findall(r'(\w+)="([^"]+)"', part)
+                        for attr, value in attrs:
+                            if attr == "size":
+                                font_size = int(value)
+                            elif attr == "color":
+                                font_color = tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
+                    elif part == '</font>':
+                        font_color = (0, 0, 0)
+                else:
+                    if part.strip():
+                        run = paragraph.add_run(part)
+                        run.font.bold = bold
+                        run.font.size = Pt(font_size)
+                        run.font.name = font_face
+                        run.font.color.rgb = RGBColor(*font_color)
+
     def _add_table(self, table_element):
         col_widths = [float(x.strip()) for x in table_element.get("col_widths", "2,1,2").split(',')]
         rows = list(table_element.findall("row"))
@@ -136,25 +176,6 @@ class XMLToWordParser:
         for i, width in enumerate(col_widths):
             for cell in table.columns[i].cells:
                 cell.width = Inches(width)
-
-    def _add_list(self, list_element):
-        list_type = list_element.get("type", "bullet")
-        items = list_element.findall("item")
-        for item in items:
-            p = self.doc.add_paragraph()
-            p.style = 'List Bullet' if list_type == "bullet" else 'List Number'
-            title = item.find("title")
-            if title is not None and title.text:
-                p.add_run(title.text)
-            for nested in item:
-                if nested.tag != "title":
-                    if nested.tag == "text":
-                        self.doc.add_paragraph()
-                        self._add_text(nested)
-                    elif nested.tag == "table":
-                        self._add_table(nested)
-                    elif nested.tag == "image":
-                        self._add_image(nested)
 
     def _add_caption(self, caption: str):
         target = 'Рисунок'
@@ -193,4 +214,4 @@ if __name__ == "__main__":
     parser = XMLToWordParser("input.xml", "output.docx", "title_page.docx")
     result = parser.parse_and_convert()
     print(result)
-     # type: ignore
+    #type: ignore

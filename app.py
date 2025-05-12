@@ -10,12 +10,14 @@ import xml.etree.ElementTree as ET
 from parser import XMLToWordParser
 from dotenv import load_dotenv
 import logging
-
+import mimetypes
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = 'окак'
+
+with open('app.log', 'w') as f: f.write('')
 
 logging.basicConfig(level=logging.INFO, filename='app.log', format='%(asctime)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
@@ -28,7 +30,7 @@ DB_CONFIG = {
     'port': os.getenv('DB_PORT')
 }
 
-UPLOADS_DIR = 'uploads'
+UPLOADS_DIR = 'Uploads'
 DOCUMENTS_DIR = 'documents'
 PREVIEW_DIR = 'static/previews'
 TEMP_DOCX = 'temp.doc'
@@ -133,6 +135,18 @@ def create():
         return redirect(url_for('login'))
     return redirect(url_for('edit_document', doc_id=0))
 
+def validate_image(file):
+    """Проверяет, является ли файл изображением и не превышает ли его размер 10 МБ."""
+    MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 МБ в байтах
+    ALLOWED_MIME_TYPES = {'image/jpeg', 'image/png', 'image/gif', 'image/bmp'}
+
+    if file.content_length > MAX_FILE_SIZE:
+        return False, "Файл слишком большой. Максимальный размер: 10 МБ."
+    mime_type, _ = mimetypes.guess_type(file.filename)
+    if mime_type not in ALLOWED_MIME_TYPES:
+        return False, "Недопустимый формат файла. Поддерживаются: JPEG, PNG, GIF, BMP."
+    return True, None
+
 @app.route('/document/<int:doc_id>', methods=['GET', 'POST'])
 def edit_document(doc_id):
     user = get_current_user()
@@ -147,10 +161,10 @@ def edit_document(doc_id):
                 document = cur.fetchone()
                 if not document:
                     return 'Документ не найден или не принадлежит вам', 403
-        logger.info(f"Loaded existing document: id={doc_id}, title={document['title']}")
+        logger.info(f"Загружен существующий документ: id={doc_id}, title={document['title']}")
 
     if request.method == 'POST':
-        logger.info(f"POST request received for doc_id={doc_id}")
+        logger.info(f"Получен POST-запрос для doc_id={doc_id}")
         
         if doc_id == 0:
             title = request.form.get('title', '').strip()
@@ -167,11 +181,11 @@ def edit_document(doc_id):
                     doc_id = cur.fetchone()['id']
                     conn.commit()
             document = {'id': doc_id, 'title': title, 'xml_path': xml_path, 'template_id': template_id}
-            logger.info(f"Created new document: id={doc_id}, title={title}")
+            logger.info(f"Создан новый документ: id={doc_id}, title={title}")
         else:
             if not document:
                 return jsonify({'error': 'Документ не найден'}), 404
-            logger.info(f"Updating existing document: id={doc_id}, title={document['title']}")
+            logger.info(f"Обновление существующего документа: id={doc_id}, title={document['title']}")
 
         blocks = request.form.getlist('block_type[]')
         contents = request.form.getlist('content[]')
@@ -187,34 +201,57 @@ def edit_document(doc_id):
         caption_sizes = request.form.getlist('caption_size[]')
         caption_faces = request.form.getlist('caption_face[]')
         caption_colors = request.form.getlist('caption_color[]')
-        list_item_titles = request.form.getlist('list_item_title[]')
+        list_item_numbers = request.form.getlist('list_item_number[]')
 
         logger.info(f"blocks: {blocks}")
         logger.info(f"contents: {contents}")
-        logger.info(f"list_item_titles: {list_item_titles}")
+        logger.info(f"list_item_numbers: {list_item_numbers}")
 
         root = ET.Element("root")
+
         content_idx = 0
         image_idx = 0
         list_item_idx = 0
-        block_idx = 0
+        style_idx = 0
 
-        while block_idx < len(blocks):
-            block = blocks[block_idx]
-            logger.info(f"Processing block {block_idx}: {block}")
+        for block_idx, block in enumerate(blocks):
+            logger.info(f"Обработка блока {block_idx}: {block}")
             if block == "text" and content_idx < len(contents):
                 text_elem = ET.SubElement(root, "text")
                 text_elem.text = contents[content_idx]
-                text_elem.set("align", aligns[content_idx] if content_idx < len(aligns) else "justify")
-                text_elem.set("indent_left", indents_left[content_idx] if content_idx < len(indents_left) else "0")
-                text_elem.set("indent_first_line", indents_first_line[content_idx] if content_idx < len(indents_first_line) else "0")
-                text_elem.set("line_spacing", line_spacings[content_idx] if content_idx < len(line_spacings) else "1.5")
-                font_face = request.form.get(f'face_block_{content_idx}', 'Times New Roman')
-                font_size = request.form.get(f'size_block_{content_idx}', '14')
+                text_elem.set("align", aligns[style_idx] if style_idx < len(aligns) else "justify")
+                text_elem.set("indent_left", indents_left[style_idx] if style_idx < len(indents_left) else "0")
+                text_elem.set("indent_first_line", indents_first_line[style_idx] if style_idx < len(indents_first_line) else "0")
+                text_elem.set("line_spacing", line_spacings[style_idx] if style_idx < len(line_spacings) else "1.5")
+                font_face = request.form.get(f'face_block_{style_idx}', 'Times New Roman')
+                font_size = request.form.get(f'size_block_{style_idx}', '14')
                 text_elem.set("font_face", font_face)
                 text_elem.set("font_size", font_size)
                 content_idx += 1
-                block_idx += 1
+                style_idx += 1
+            elif block == "list_item" and content_idx < len(contents):
+                text_elem = ET.SubElement(root, "list_item")
+                text_elem.text = contents[content_idx]
+                text_elem.set("align", aligns[style_idx] if style_idx < len(aligns) else "justify")
+                text_elem.set("indent_left", indents_left[style_idx] if style_idx < len(indents_left) else "0")
+                text_elem.set("indent_first_line", indents_first_line[style_idx] if style_idx < len(indents_first_line) else "0")
+                text_elem.set("line_spacing", line_spacings[style_idx] if style_idx < len(line_spacings) else "1.5")
+                font_face = request.form.get(f'face_block_{style_idx}', 'Times New Roman')
+                font_size = request.form.get(f'size_block_{style_idx}', '14')
+                text_elem.set("font_face", font_face)
+                text_elem.set("font_size", font_size)
+                if list_item_idx < len(list_item_numbers) and list_item_numbers[list_item_idx].strip():
+                    text_elem.set("list_item_number", list_item_numbers[list_item_idx])
+                    logger.info(f"Присвоен list_item_number: {list_item_numbers[list_item_idx]} для блока {block_idx}")
+                    list_item_idx += 1
+                else:
+                    logger.info(f"Нет list_item_number для блока {block_idx}, пропущено")
+                content_idx += 1
+                style_idx += 1
+            elif block == "comment" and content_idx < len(contents):
+                comment_elem = ET.SubElement(root, "comment")
+                comment_elem.text = contents[content_idx]
+                content_idx += 1
             elif block == "table" and content_idx < len(contents):
                 table_elem = ET.SubElement(root, "table")
                 table_elem.set("col_widths", col_widths)
@@ -227,38 +264,12 @@ def edit_document(doc_id):
                             cell_elem = ET.SubElement(row_elem, "cell")
                             cell_elem.text = cell.strip()
                 content_idx += 1
-                block_idx += 1
-            elif block == "numbered_list":
-                list_elem = ET.SubElement(root, "list")
-                list_elem.set("type", "numbered")
-                block_idx += 1
-                while block_idx < len(blocks) and blocks[block_idx] == "list_item" and list_item_idx < len(list_item_titles):
-                    item_elem = ET.SubElement(list_elem, "item")
-                    title_elem = ET.SubElement(item_elem, "title")
-                    title_elem.text = list_item_titles[list_item_idx]
-                    list_item_block_id = f"block_{block_idx}"
-                    block_idx += 1
-                    while (block_idx < len(blocks) and 
-                           content_idx < len(contents) and 
-                           request.form.get(f'content_parent_{content_idx}') == list_item_block_id):
-                        nested_type = blocks[block_idx]
-                        if nested_type == "text":
-                            nested_elem = ET.SubElement(item_elem, "text")
-                            nested_elem.text = contents[content_idx]
-                            nested_elem.set("align", aligns[content_idx] if content_idx < len(aligns) else "justify")
-                            nested_elem.set("indent_left", indents_left[content_idx] if content_idx < len(indents_left) else "0")
-                            nested_elem.set("indent_first_line", indents_first_line[content_idx] if content_idx < len(indents_first_line) else "0")
-                            nested_elem.set("line_spacing", line_spacings[content_idx] if content_idx < len(line_spacings) else "1.5")
-                            font_face = request.form.get(f'face_block_{content_idx}', 'Times New Roman')
-                            font_size = request.form.get(f'size_block_{content_idx}', '14')
-                            nested_elem.set("font_face", font_face)
-                            nested_elem.set("font_size", font_size)
-                            content_idx += 1
-                        block_idx += 1
-                    list_item_idx += 1
             elif block == "image" and image_idx < len(images):
                 image_elem = ET.SubElement(root, "image")
                 if images[image_idx] and images[image_idx].filename:
+                    is_valid, error = validate_image(images[image_idx])
+                    if not is_valid:
+                        return jsonify({'error': f"Ошибка загрузки изображения: {error}"}), 400
                     unique_filename = f"{user['id']}_{image_idx}_{random.randint(1000, 9999)}_{images[image_idx].filename}"
                     image_path = os.path.join(UPLOADS_DIR, unique_filename)
                     images[image_idx].save(image_path)
@@ -272,14 +283,13 @@ def edit_document(doc_id):
                     image_elem.set("caption_face", caption_faces[image_idx] if image_idx < len(caption_faces) else "Times New Roman")
                     image_elem.set("caption_color", caption_colors[image_idx].lstrip('#') if image_idx < len(caption_colors) else "000000")
                 image_idx += 1
-                block_idx += 1
             else:
-                block_idx += 1
+                logger.warning(f"Пропущен блок {block_idx}: {block}, нет соответствующих данных")
 
         xml_str = ET.tostring(root, encoding='utf-8', method='xml')
         with open(document['xml_path'], 'wb') as f:
             f.write(xml_str)
-        logger.info(f"Saved XML to {document['xml_path']}")
+        logger.info(f"Сохранен XML в {document['xml_path']}")
 
         if 'generate' in request.form:
             with get_db_connection() as conn:
@@ -289,22 +299,21 @@ def edit_document(doc_id):
             if not template:
                 return jsonify({'error': 'Шаблон не найден'}), 400
             title_page_path = template['title_page_path']
-            logger.info(f"Generated XML content: {ET.tostring(root, encoding='unicode')}")
+            logger.info(f"Сгенерирован XML: {ET.tostring(root, encoding='unicode')}")
             parser = XMLToWordParser(document['xml_path'], TEMP_DOCX, title_page_path)
             result = parser.parse_and_convert()
             if "Ошибка" not in result:
-                logger.info(f"Generated DOCX for document id={doc_id}")
+                logger.info(f"Сгенерирован DOCX для документа id={doc_id}")
                 return send_file(TEMP_DOCX, as_attachment=True, download_name=f"{document['title']}_{doc_id}.docx")
-            logger.error(f"Generation error: {result}")
+            logger.error(f"Ошибка генерации: {result}")
             return jsonify({'error': f"Ошибка генерации: {result}"}), 500
         
-        # Возвращаем JSON вместо редиректа
         return jsonify({'success': True, 'doc_id': doc_id})
 
-    logger.info(f"Rendering edit page for doc_id={doc_id}")
+    logger.info(f"Рендеринг страницы редактирования для doc_id={doc_id}")
     return render_template('edit.html', template_id=doc_id, templates=get_all_templates(), error=None)
 
-@app.route('/uploads/<path:filename>')
+@app.route('/Uploads/<path:filename>')
 def serve_uploaded_file(filename):
     return send_file(os.path.join(UPLOADS_DIR, filename))
 
@@ -315,10 +324,13 @@ def upload_image():
         return jsonify({'error': 'Не авторизован'}), 401
     image = request.files.get('image')
     if image and image.filename:
+        is_valid, error = validate_image(image)
+        if not is_valid:
+            return jsonify({'error': error}), 400
         unique_filename = f"{user['id']}_{random.randint(1000, 9999)}_{image.filename}"
         image_path = os.path.join(UPLOADS_DIR, unique_filename)
         image.save(image_path)
-        return jsonify({'path': f"/uploads/{unique_filename}"})
+        return jsonify({'path': f"/Uploads/{unique_filename}"})
     return jsonify({'error': 'Изображение не загружено'}), 400
 
 @app.route('/create_template', methods=['GET', 'POST'])
@@ -385,18 +397,21 @@ def get_template(doc_id):
                 "font_faces": [],
                 "font_sizes": [],
                 "col_widths": "2,1,2",
-                "list_item_titles": [],
-                "content_parents": []  # Добавляем для отслеживания вложенности
+                "list_item_numbers": [],
+                "global_indent_left": "0",
+                "global_indent_first_line": "0",
+                "global_line_spacing": "1.5"
             }
 
             if os.path.exists(document['xml_path']):
                 with open(document['xml_path'], 'r', encoding='utf-8') as f:
                     root = ET.fromstring(f.read())
-                    content_idx = 0
-                    list_item_idx = 0
+                    data["global_indent_left"] = root.get("global_indent_left", "0")
+                    data["global_indent_first_line"] = root.get("global_indent_first_line", "0")
+                    data["global_line_spacing"] = root.get("global_line_spacing", "1.5")
                     for elem in root:
-                        if elem.tag == "text":
-                            data["blocks"].append("text")
+                        if elem.tag in ["text", "list_item"]:
+                            data["blocks"].append(elem.tag)
                             data["contents"].append(elem.text or "")
                             data["aligns"].append(elem.get("align", "justify"))
                             data["indents_left"].append(elem.get("indent_left", "0"))
@@ -406,58 +421,19 @@ def get_template(doc_id):
                             data["font_sizes"].append(elem.get("font_size", "14"))
                             data["paths"].append("")
                             data["captions"].append("")
-                            data["content_parents"].append(None)
-                            content_idx += 1
-                        elif elem.tag == "list":
-                            data["blocks"].append("numbered_list")  # Явно указываем тип списка
-                            for item in elem.findall("item"):
-                                data["blocks"].append("list_item")  # Добавляем list_item как отдельный блок
-                                title = item.find("title")
-                                data["list_item_titles"].append(title.text or "" if title is not None else "")
-                                list_item_id = f"block_{len(data['blocks']) - 1}"  # ID текущего list_item
-                                for nested in item:
-                                    if nested.tag != "title":
-                                        data["blocks"].append(nested.tag)
-                                        if nested.tag == "text":
-                                            data["contents"].append(nested.text or "")
-                                            data["aligns"].append(nested.get("align", "justify"))
-                                            data["indents_left"].append(nested.get("indent_left", "0"))
-                                            data["indents_first_line"].append(nested.get("indent_first_line", "0"))
-                                            data["line_spacings"].append(nested.get("line_spacing", "1.5"))
-                                            data["font_faces"].append(nested.get("font_face", "Times New Roman"))
-                                            data["font_sizes"].append(nested.get("font_size", "14"))
-                                            data["paths"].append("")
-                                            data["captions"].append("")
-                                            data["content_parents"].append(list_item_id)  # Привязываем к list_item
-                                            content_idx += 1
-                                        elif nested.tag == "table":
-                                            rows = [",".join(cell.text or "" for cell in row.findall("cell")) for row in nested.findall("row")]
-                                            data["contents"].append("\n".join(rows))
-                                            data["aligns"].append("")
-                                            data["indents_left"].append("0")
-                                            data["indents_first_line"].append("0")
-                                            data["line_spacings"].append("1.5")
-                                            data["font_faces"].append("")
-                                            data["font_sizes"].append("")
-                                            data["paths"].append("")
-                                            data["captions"].append("")
-                                            data["content_parents"].append(list_item_id)
-                                            data["col_widths"] = nested.get("col_widths", "2,1,2")
-                                            content_idx += 1
-                                        elif nested.tag == "image":
-                                            data["contents"].append("")
-                                            data["aligns"].append("")
-                                            data["indents_left"].append("0")
-                                            data["indents_first_line"].append("0")
-                                            data["line_spacings"].append("1.5")
-                                            data["font_faces"].append("")
-                                            data["font_sizes"].append("")
-                                            image_path = nested.get("path", "")
-                                            data["paths"].append(f"/uploads/{os.path.basename(image_path)}" if image_path else "")
-                                            data["captions"].append(nested.get("caption", ""))
-                                            data["content_parents"].append(list_item_id)
-                                            content_idx += 1
-                                list_item_idx += 1
+                            data["list_item_numbers"].append(elem.get("list_item_number", "") if elem.tag == "list_item" else "")
+                        elif elem.tag == "comment":
+                            data["blocks"].append("comment")
+                            data["contents"].append(elem.text or "")
+                            data["aligns"].append("")
+                            data["indents_left"].append("0")
+                            data["indents_first_line"].append("0")
+                            data["line_spacings"].append("1.5")
+                            data["font_faces"].append("")
+                            data["font_sizes"].append("")
+                            data["paths"].append("")
+                            data["captions"].append("")
+                            data["list_item_numbers"].append("")
                         elif elem.tag == "table":
                             data["blocks"].append("table")
                             rows = [",".join(cell.text or "" for cell in row.findall("cell")) for row in elem.findall("row")]
@@ -470,9 +446,8 @@ def get_template(doc_id):
                             data["font_sizes"].append("")
                             data["paths"].append("")
                             data["captions"].append("")
-                            data["content_parents"].append(None)
+                            data["list_item_numbers"].append("")
                             data["col_widths"] = elem.get("col_widths", "2,1,2")
-                            content_idx += 1
                         elif elem.tag == "image":
                             data["blocks"].append("image")
                             data["contents"].append("")
@@ -483,10 +458,9 @@ def get_template(doc_id):
                             data["font_faces"].append("")
                             data["font_sizes"].append("")
                             image_path = elem.get("path", "")
-                            data["paths"].append(f"/uploads/{os.path.basename(image_path)}" if image_path else "")
+                            data["paths"].append(f"/Uploads/{os.path.basename(image_path)}" if image_path else "")
                             data["captions"].append(elem.get("caption", ""))
-                            data["content_parents"].append(None)
-                            content_idx += 1
+                            data["list_item_numbers"].append("")
 
             if document['template_id']:
                 cur.execute('SELECT default_font_face, default_font_size, default_indent_left, default_indent_first_line, default_line_spacing FROM templates WHERE id = %s', (document['template_id'],))
@@ -505,9 +479,9 @@ def get_template(doc_id):
 
 def generate_preview(docx_path):
     safe_filename = docx_path
-    preview_filename = f"static/previews/{safe_filename.replace('.docx', '.png').replace('uploads/', '')}"
+    preview_filename = f"static/previews/{safe_filename.replace('.docx', '.png').replace('Uploads/', '')}"
     preview_path = preview_filename
-    pdf_path = os.path.join(TEMP_DIR, f"{safe_filename.replace('.docx', '.pdf').replace('uploads/', '')}")
+    pdf_path = os.path.join(TEMP_DIR, f"{safe_filename.replace('.docx', '.pdf').replace('Uploads/', '')}")
 
     try:
         result = subprocess.run(
