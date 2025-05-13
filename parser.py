@@ -6,212 +6,211 @@ import xml.etree.ElementTree as ET
 from docx.shared import Pt, Inches, RGBColor
 from docx.oxml import OxmlElement, ns
 from docx.enum.style import WD_STYLE_TYPE
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class XMLToWordParser:
-    def __init__(self, xml_path, output_path, title_page_path=None):
-        self.xml_path = xml_path
-        self.output_path = output_path
-        self.title_page_path = title_page_path
-        self.doc = Document(self.title_page_path) if self.title_page_path else Document()
-        self._add_caption_style()
-        self._add_list_styles()
+	def __init__(self, xml_path, output_path, title_page_path=None):
+		self.xml_path = xml_path
+		self.output_path = output_path
+		self.title_page_path = title_page_path
+		self.doc = Document(self.title_page_path) if self.title_page_path else Document()
+		self._add_caption_style()
+		self._add_list_styles()
 
-    def _add_caption_style(self):
-        styles = self.doc.styles
-        if 'Подпись' not in styles:
-            style = styles.add_style('Подпись', WD_STYLE_TYPE.PARAGRAPH)
-            style.font.name = 'Times New Roman'
-            style.font.size = Pt(12)
-            style.font.color.rgb = RGBColor(0, 0, 0)
-            style.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+	def _add_caption_style(self):
+		styles = self.doc.styles
+		try:
+			styles['Подпись']
+		except KeyError:
+			style = styles.add_style('Подпись', WD_STYLE_TYPE.PARAGRAPH)
+			style.font.name = 'Times New Roman'
+			style.font.size = Pt(12)
+			style.font.color.rgb = RGBColor(0, 0, 0)
+			style.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-    def _add_list_styles(self):
-        styles = self.doc.styles
-        for level in range(5):
-            style_name = f'List Number {level + 1}'
-            if style_name not in styles:
-                number_style = styles.add_style(style_name, WD_STYLE_TYPE.PARAGRAPH)
-                number_style.font.name = 'Times New Roman'
-                number_style.font.size = Pt(14)
-                number_style.paragraph_format.left_indent = Inches(0)
-                number_style.paragraph_format.first_line_indent = Inches(0)
-                number_p = number_style._element.get_or_add_pPr()
-                numPr = OxmlElement('w:numPr')
-                ilvl = OxmlElement('w:ilvl')
-                ilvl.set(ns.qn('w:val'), str(level))
-                numId = OxmlElement('w:numId')
-                numId.set(ns.qn('w:val'), str(2 + level))
-                numPr.append(ilvl)
-                numPr.append(numId)
-                number_p.append(numPr)
+	def _add_list_styles(self):
+		styles = self.doc.styles
+		for level in range(5):
+			style_name = f'List Number {level + 1}'
+			try:
+				styles[style_name]
+			except KeyError:
+				number_style = styles.add_style(style_name, WD_STYLE_TYPE.PARAGRAPH)
+				number_style.font.name = 'Times New Roman'
+				number_style.font.size = Pt(14)
+				number_style.paragraph_format.left_indent = Inches(0)
+				number_style.paragraph_format.first_line_indent = Inches(0)
+				number_p = number_style._element.get_or_add_pPr()
+				numPr = OxmlElement('w:numPr')
+				ilvl = OxmlElement('w:ilvl')
+				ilvl.set(ns.qn('w:val'), str(level))
+				numId = OxmlElement('w:numId')
+				numId.set(ns.qn('w:val'), str(2 + level))
+				numPr.append(ilvl)
+				numPr.append(numId)
+				number_p.append(numPr)
 
-    def parse_and_convert(self):
-        try:
-            if self.title_page_path:
-                self.doc.add_page_break()
-            with open(self.xml_path, 'r', encoding='utf-8') as f:
-                root = ET.fromstring(f.read())
-            for element in root:
-                if element.tag == "text":
-                    self._add_text(element)
-                elif element.tag == "list_item":
-                    self._add_list_item(element)
-                elif element.tag == "comment":
-                    continue
-                elif element.tag == "table":
-                    self._add_table(element)
-                elif element.tag == "image":
-                    self._add_image(element)
-            self.doc.save(self.output_path)
-            return self.output_path
-        except Exception as e:
-            return f"Ошибка при генерации документа: {str(e)}"
+	def parse_and_convert(self):
+		try:
+			if self.title_page_path:
+				self.doc.add_page_break()
+			with open(self.xml_path, 'r', encoding='utf-8') as f:
+				root = ET.fromstring(f.read())
+			for element in root:
+				if element.tag == "text":
+					self._add_text(element)
+				elif element.tag == "list_item":
+					self._add_list_item(element)
+				elif element.tag == "comment":
+					continue
+				elif element.tag == "image":
+					self._add_image(element)
+			self.doc.save(self.output_path)
+			return self.output_path
+		except Exception as e:
+			logger.error("Ошибка при генерации документа", exc_info=True)
+			return f"Ошибка при генерации документа"
 
-    def _add_text(self, text_element):
-        text = text_element.text.strip() if text_element.text else ""
-        alignment = text_element.get("align", "justify")
-        indent_left_cm = float(text_element.get("indent_left", "0"))
-        indent_first_line_cm = float(text_element.get("indent_first_line", "0"))
-        line_spacing = float(text_element.get("line_spacing", "1.5"))
-        font_face = text_element.get("font_face", "Times New Roman")
-        font_size = int(text_element.get("font_size", "14"))
-        align_map = {
-            "left": WD_ALIGN_PARAGRAPH.LEFT,
-            "center": WD_ALIGN_PARAGRAPH.CENTER,
-            "right": WD_ALIGN_PARAGRAPH.RIGHT,
-            "justify": WD_ALIGN_PARAGRAPH.JUSTIFY
-        }
-        if text:
-            paragraph = self.doc.add_paragraph()
-            paragraph.paragraph_format.alignment = align_map.get(alignment, WD_ALIGN_PARAGRAPH.JUSTIFY)
-            paragraph.paragraph_format.left_indent = Inches(indent_left_cm * 0.393701)
-            paragraph.paragraph_format.first_line_indent = Inches(indent_first_line_cm * 0.393701)
-            paragraph.paragraph_format.line_spacing = line_spacing
-            parts = re.split(r'(<[^>]+>)', text)
-            bold = False
-            font_color = (0, 0, 0)
-            for part in parts:
-                if part.startswith('<') and part.endswith('>'):
-                    if part == '<b>':
-                        bold = True
-                    elif part == '</b>':
-                        bold = False
-                    elif part.startswith('<font'):
-                        attrs = re.findall(r'(\w+)="([^"]+)"', part)
-                        for attr, value in attrs:
-                            if attr == "size":
-                                font_size = int(value)
-                            elif attr == "color":
-                                font_color = tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
-                    elif part == '</font>':
-                        font_color = (0, 0, 0)
-                else:
-                    if part.strip():
-                        run = paragraph.add_run(part)
-                        run.font.bold = bold
-                        run.font.size = Pt(font_size)
-                        run.font.name = font_face
-                        run.font.color.rgb = RGBColor(*font_color)
+	def _add_text(self, text_element):
+		text = text_element.text.strip() if text_element.text else ""
+		alignment = text_element.get("align", "justify")
+		indent_left_cm = float(text_element.get("indent_left", "0"))
+		indent_first_line_cm = float(text_element.get("indent_first_line", "0"))
+		line_spacing = float(text_element.get("line_spacing", "1.5"))
+		font_face = text_element.get("font_face", "Times New Roman")
+		default_font_size = int(text_element.get("font_size", "14"))
+		align_map = {
+			"left": WD_ALIGN_PARAGRAPH.LEFT,
+			"center": WD_ALIGN_PARAGRAPH.CENTER,
+			"right": WD_ALIGN_PARAGRAPH.RIGHT,
+			"justify": WD_ALIGN_PARAGRAPH.JUSTIFY
+		}
+		if text:
+			paragraph = self.doc.add_paragraph()
+			paragraph.paragraph_format.alignment = align_map.get(alignment, WD_ALIGN_PARAGRAPH.JUSTIFY)
+			paragraph.paragraph_format.left_indent = Inches(indent_left_cm * 0.393701)
+			paragraph.paragraph_format.first_line_indent = Inches(indent_first_line_cm * 0.393701)
+			paragraph.paragraph_format.line_spacing = line_spacing
+			parts = re.split(r'(<[^>]+>)', text)
+			bold = False
+			current_font_size = default_font_size
+			current_font_color = (0, 0, 0)
+			for part in parts:
+				if part.startswith('<') and part.endswith('>'):
+					if part == '<b>':
+						bold = True
+					elif part == '</b>':
+						bold = False
+					elif part.startswith('<font'):
+						attrs = re.findall(r'(\w+)="([^"]+)"', part)
+						for attr, value in attrs:
+							if attr == "size":
+								current_font_size = int(value)
+							elif attr == "color":
+								current_font_color = tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
+					elif part == '</font>':
+						current_font_size = default_font_size
+						current_font_color = (0, 0, 0)
+				else:
+					if part.strip():
+						run = paragraph.add_run(part)
+						run.font.bold = bold
+						run.font.size = Pt(current_font_size)
+						run.font.name = font_face
+						run.font.color.rgb = RGBColor(*current_font_color)
 
-    def _add_list_item(self, list_item_element):
-        text = list_item_element.text.strip() if list_item_element.text else ""
-        alignment = list_item_element.get("align", "justify")
-        indent_left_cm = float(list_item_element.get("indent_left", "0"))
-        indent_first_line_cm = float(list_item_element.get("indent_first_line", "0"))
-        line_spacing = float(list_item_element.get("line_spacing", "1.5"))
-        font_face = list_item_element.get("font_face", "Times New Roman")
-        font_size = int(list_item_element.get("font_size", "14"))
-        list_item_number = list_item_element.get("list_item_number", "1")
-        level = len(list_item_element.get("list_item_number", "1").split('.')) - 1
-        level = min(level, 4)
+	def _add_list_item(self, list_item_element):
+		text = list_item_element.text.strip() if list_item_element.text else ""
+		alignment = list_item_element.get("align", "justify")
+		indent_left_cm = float(list_item_element.get("indent_left", "0"))
+		indent_first_line_cm = float(list_item_element.get("indent_first_line", "0"))
+		line_spacing = float(list_item_element.get("line_spacing", "1.5"))
+		font_face = list_item_element.get("font_face", "Times New Roman")
+		default_font_size = int(list_item_element.get("font_size", "14"))
+		level = min(len(list_item_element.get("list_item_number", "1").split('.')) - 1, 4)
+		style_name = f'List Number {level + 1}'
+		if text:
+			paragraph = self.doc.add_paragraph()
+			paragraph.style = style_name
+			paragraph.paragraph_format.left_indent = Inches(indent_left_cm * 0.393701)
+			paragraph.paragraph_format.first_line_indent = Inches(indent_first_line_cm * 0.393701)
+			paragraph.paragraph_format.line_spacing = line_spacing
+			paragraph.paragraph_format.alignment = {
+				"left": WD_ALIGN_PARAGRAPH.LEFT,
+				"center": WD_ALIGN_PARAGRAPH.CENTER,
+				"right": WD_ALIGN_PARAGRAPH.RIGHT,
+				"justify": WD_ALIGN_PARAGRAPH.JUSTIFY
+			}.get(alignment, WD_ALIGN_PARAGRAPH.JUSTIFY)
+			parts = re.split(r'(<[^>]+>)', text)
+			bold = False
+			current_font_size = default_font_size
+			current_font_color = (0, 0, 0)
+			for part in parts:
+				if part.startswith('<') and part.endswith('>'):
+					if part == '<b>':
+						bold = True
+					elif part == '</b>':
+						bold = False
+					elif part.startswith('<font'):
+						attrs = re.findall(r'(\w+)="([^"]+)"', part)
+						for attr, value in attrs:
+							if attr == "size":
+								current_font_size = int(value)
+							elif attr == "color":
+								current_font_color = tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
+					elif part == '</font>':
+						current_font_size = default_font_size
+						current_font_color = (0, 0, 0)
+				else:
+					if part.strip():
+						run = paragraph.add_run(part)
+						run.font.bold = bold
+						run.font.size = Pt(current_font_size)
+						run.font.name = font_face
+						run.font.color.rgb = RGBColor(*current_font_color)
 
-        style_name = f'List Number {level + 1}'
-        if text:
-            paragraph = self.doc.add_paragraph()
-            paragraph.style = style_name
-            paragraph.paragraph_format.left_indent = Inches(indent_left_cm * 0.393701)
-            paragraph.paragraph_format.first_line_indent = Inches(indent_first_line_cm * 0.393701)
-            paragraph.paragraph_format.line_spacing = line_spacing
-            paragraph.paragraph_format.alignment = {
-                "left": WD_ALIGN_PARAGRAPH.LEFT,
-                "center": WD_ALIGN_PARAGRAPH.CENTER,
-                "right": WD_ALIGN_PARAGRAPH.RIGHT,
-                "justify": WD_ALIGN_PARAGRAPH.JUSTIFY
-            }.get(alignment, WD_ALIGN_PARAGRAPH.JUSTIFY)
-            parts = re.split(r'(<[^>]+>)', text)
-            bold = False
-            font_color = (0, 0, 0)
-            for part in parts:
-                if part.startswith('<') and part.endswith('>'):
-                    if part == '<b>':
-                        bold = True
-                    elif part == '</b>':
-                        bold = False
-                    elif part.startswith('<font'):
-                        attrs = re.findall(r'(\w+)="([^"]+)"', part)
-                        for attr, value in attrs:
-                            if attr == "size":
-                                font_size = int(value)
-                            elif attr == "color":
-                                font_color = tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
-                    elif part == '</font>':
-                        font_color = (0, 0, 0)
-                else:
-                    if part.strip():
-                        run = paragraph.add_run(part)
-                        run.font.bold = bold
-                        run.font.size = Pt(font_size)
-                        run.font.name = font_face
-                        run.font.color.rgb = RGBColor(*font_color)
+	def _add_caption(self, caption: str):
+		target = 'Рисунок'
+		paragraph = self.doc.add_paragraph(f'{target} ', style='Подпись')
+		run = paragraph.add_run()
+		fldChar = OxmlElement('w:fldChar')
+		fldChar.set(ns.qn('w:fldCharType'), 'begin')
+		run._r.append(fldChar)
+		instrText = OxmlElement('w:instrText')
+		instrText.text = f'SEQ {target} \\* ARABIC'
+		run._r.append(instrText)
+		fldChar = OxmlElement('w:fldChar')
+		fldChar.set(ns.qn('w:fldCharType'), 'end')
+		run._r.append(fldChar)
+		paragraph.add_run(f' - {caption}')
+		return paragraph
 
-    def _add_table(self, table_element):
-        col_widths = [float(x.strip()) for x in table_element.get("col_widths", "2,1,2").split(',')]
-        rows = list(table_element.findall("row"))
-        table = self.doc.add_table(rows=len(rows), cols=len(col_widths))
-        table.style = 'Table Grid'
-        for i, row in enumerate(rows):
-            cells = row.findall("cell")
-            for j, cell in enumerate(cells):
-                table.rows[i].cells[j].text = cell.text or ""
-        for i, width in enumerate(col_widths):
-            for cell in table.columns[i].cells:
-                cell.width = Inches(width)
-
-    def _add_caption(self, caption: str):
-        target = 'Рисунок'
-        paragraph = self.doc.add_paragraph(f'{target} ', style='Подпись')
-        run = paragraph.add_run()
-        fldChar = OxmlElement('w:fldChar')
-        fldChar.set(ns.qn('w:fldCharType'), 'begin')
-        run._r.append(fldChar)
-        instrText = OxmlElement('w:instrText')
-        instrText.text = f'SEQ {target} \\* ARABIC'
-        run._r.append(instrText)
-        fldChar = OxmlElement('w:fldChar')
-        fldChar.set(ns.qn('w:fldCharType'), 'end')
-        run._r.append(fldChar)
-        paragraph.add_run(f' - {caption}')
-        return paragraph
-
-    def _add_image(self, image_element):
-        path = image_element.get("path")
-        if path and os.path.exists(path):
-            paragraph = self.doc.add_paragraph()
-            paragraph.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            run = paragraph.add_run()
-            run.add_picture(path, width=Inches(4))
-            caption = image_element.get("caption")
-            if caption:
-                caption_paragraph = self._add_caption(caption)
-                run = caption_paragraph.runs[-1]
-                run.font.bold = image_element.get("caption_bold") == "true"
-                run.font.size = Pt(int(image_element.get("caption_size", "12")))
-                run.font.name = image_element.get("caption_face", "Times New Roman")
-                color = image_element.get("caption_color", "000000")
-                run.font.color.rgb = RGBColor(int(color[0:2], 16), int(color[2:4], 16), int(color[4:6], 16))
+	def _add_image(self, image_element):
+		path = image_element.get("path")
+		if path and os.path.exists(path):
+			paragraph = self.doc.add_paragraph()
+			paragraph.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+			run = paragraph.add_run()
+			try:
+				run.add_picture(path, width=Inches(4))
+			except Exception as e:
+				logger.warning(f"Ошибка при вставке изображения: {e}")
+				return
+			caption = image_element.get("caption")
+			if caption:
+				caption_paragraph = self._add_caption(caption)
+				run = caption_paragraph.runs[-1]
+				run.font.bold = image_element.get("caption_bold") == "true"
+				run.font.size = Pt(int(image_element.get("caption_size", "12")))
+				run.font.name = image_element.get("caption_face", "Times New Roman")
+				color = image_element.get("caption_color", "000000")
+				run.font.color.rgb = RGBColor(int(color[0:2], 16), int(color[2:4], 16), int(color[4:6], 16))
 
 if __name__ == "__main__":
-    parser = XMLToWordParser("input.xml", "output.docx", "title_page.docx")
-    result = parser.parse_and_convert()
-    print(result)
+	parser = XMLToWordParser("input.xml", "output.docx", "title_page.docx")
+	result = parser.parse_and_convert()
+	print(result)
     #type: ignore

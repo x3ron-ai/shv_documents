@@ -126,7 +126,6 @@ function addBlock(type, parentId = null, itemId = null) {
                     <option value="Arial">Arial</option>
                     <option value="Calibri">Calibri</option>
                 </select></label>
-                <label>Цвет: <input type="color" value="#000000" oninput="updateStyle('${block.id}', 'color', this.value.slice(1)); saveTemplate()"></label>
                 <label>Выравнивание: <select oninput="updateStyle('${block.id}', 'align', this.value); saveTemplate()">
                     <option value="left">Слева</option>
                     <option value="center">По центру</option>
@@ -159,7 +158,6 @@ function addBlock(type, parentId = null, itemId = null) {
                     <option value="Arial">Arial</option>
                     <option value="Calibri">Calibri</option>
                 </select></label>
-                <label>Цвет: <input type="color" value="#000000" oninput="updateStyle('${block.id}', 'color', this.value.slice(1)); saveTemplate()"></label>
                 <label>Выравнивание: <select oninput="updateStyle('${block.id}', 'align', this.value); saveTemplate()">
                     <option value="left">Слева</option>
                     <option value="center">По центру</option>
@@ -274,8 +272,6 @@ function updateStyle(blockId, property, value) {
     } else if (property === 'face') {
         editable.style.fontFamily = value;
         block.querySelector(`#face_${blockId}`).value = value;
-    } else if (property === 'color') {
-        editable.style.color = `#${value}`;
     } else if (property === 'align') {
         editable.style.textAlign = value;
         block.querySelector(`#align_${blockId}`).value = value;
@@ -452,7 +448,7 @@ if (docId && docId !== '0') {
                     block.querySelector(`#content_${block.id}`).value = data.contents[blockIdx] || "";
                 } else if (type === 'table') {
                     block.querySelector('textarea').value = data.contents[blockIdx] || "";
-                    block.querySelector('input[name="col_widths"]').value = data.col_widths[blockIdx] || '2,1,2';
+                    block.querySelector('input[name="col_widths"]').value = data.col_widths || '2,1,2';
                 } else if (type === 'image') {
                     block.querySelector(`#caption_${block.id}`).value = data.captions[blockIdx] || "";
                     if (data.paths[blockIdx]) {
@@ -466,3 +462,36 @@ if (docId && docId !== '0') {
         })
         .catch(error => console.error('Ошибка загрузки документа:', error));
 }
+
+function updateDraggableState() {
+    const isPortrait = window.innerWidth < window.innerHeight;
+    const blocks = document.querySelectorAll('.block');
+    blocks.forEach(block => {
+        block.draggable = !isPortrait;
+        if (isPortrait) {
+            block.ondragstart = null;
+        } else {
+            block.ondragstart = dragBlock;
+        }
+    });
+}
+
+function updateDropZoneEvents() {
+    const isPortrait = window.innerWidth < window.innerHeight;
+    if (isPortrait) {
+        dropZone.ondragover = null;
+        dropZone.ondrop = null;
+    } else {
+        dropZone.ondragover = allowDrop;
+        dropZone.ondrop = drop;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateDraggableState();
+    updateDropZoneEvents();
+});
+window.addEventListener('resize', () => {
+    updateDraggableState();
+    updateDropZoneEvents();
+});
