@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, filename='app.log', format='%(asctime)s 
 logger = logging.getLogger(__name__)
 
 DB_CONFIG = {'dbname': os.getenv('DB_NAME'),'user': os.getenv('DB_USER'),'password': os.getenv('DB_PASSWORD'),'host': os.getenv('DB_HOST'),'port': os.getenv('DB_PORT')}
-UPLOADS_DIR = 'Uploads'; DOCUMENTS_DIR = 'documents'; PREVIEW_DIR = 'static/previews'; TEMP_DOCX = 'temp.doc'; TEMP_DIR = 'static/previews'
+UPLOADS_DIR = 'uploads'; DOCUMENTS_DIR = 'documents'; PREVIEW_DIR = 'static/previews'; TEMP_DOCX = 'temp.doc'; TEMP_DIR = 'static/previews'
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 os.makedirs(DOCUMENTS_DIR, exist_ok=True)
 os.makedirs(PREVIEW_DIR, exist_ok=True)
@@ -259,7 +259,7 @@ def edit_document(doc_id):
     logger.info(f"Рендеринг страницы редактирования для doc_id={doc_id}")
     return render_template('edit.html', template_id=doc_id, templates=get_all_templates(), error=None)
 
-@app.route('/Uploads/<path:filename>')
+@app.route('/uploads/<path:filename>')
 def serve_uploaded_file(filename): return send_file(os.path.join(UPLOADS_DIR, filename))
 
 @app.route('/upload_image', methods=['POST'])
@@ -273,7 +273,7 @@ def upload_image():
         unique_filename = f"{user['id']}_{random.randint(1000, 9999)}_{image.filename}"
         image_path = os.path.join(UPLOADS_DIR, unique_filename)
         image.save(image_path)
-        return jsonify({'path': f"/Uploads/{unique_filename}"})
+        return jsonify({'path': f"/uploads/{unique_filename}"})
     return jsonify({'error': 'Изображение не загружено'}), 400
 
 @app.route('/create_template', methods=['GET', 'POST'])
@@ -378,7 +378,7 @@ def get_template(doc_id):
                             data["font_faces"].append("")
                             data["font_sizes"].append("")
                             image_path = elem.get("path", "")
-                            data["paths"].append(f"/Uploads/{os.path.basename(image_path)}" if image_path else "")
+                            data["paths"].append(f"/uploads/{os.path.basename(image_path)}" if image_path else "")
                             data["captions"].append(elem.get("caption", ""))
                             data["list_item_numbers"].append("")
 
@@ -391,9 +391,9 @@ def get_template(doc_id):
 
 def generate_preview(docx_path):
     safe_filename = docx_path
-    preview_filename = f"static/previews/{safe_filename.replace('.docx', '.png').replace('Uploads/', '')}"
+    preview_filename = f"static/previews/{safe_filename.replace('.docx', '.png').replace('uploads/', '')}"
     preview_path = preview_filename
-    pdf_path = os.path.join(TEMP_DIR, f"{safe_filename.replace('.docx', '.pdf').replace('Uploads/', '')}")
+    pdf_path = os.path.join(TEMP_DIR, f"{safe_filename.replace('.docx', '.pdf').replace('uploads/', '')}")
 
     try:
         result = subprocess.run( ['soffice', '--headless', '--convert-to', 'pdf', '--outdir', TEMP_DIR, docx_path], check=True, capture_output=True, text=True)

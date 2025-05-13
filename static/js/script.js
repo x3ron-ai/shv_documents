@@ -141,7 +141,7 @@ function addBlock(type, parentId = null, itemId = null) {
         const contentIdx = blockCount - 1;
         html += `
             <div class="list-item-container">
-                <input type="text" name="list_item_number[]" class="list-item-number" placeholder="1.2.3" pattern="\\d+(\\.\\d+)*" oninput="validateListNumber(this)">
+                <input type="text" name="list_item_number[]" class="list-item-number" placeholder="Нумерация" pattern="\\d+(\\.\\d+)*" oninput="validateListNumber(this)">
                 <div class="contenteditable" contenteditable="true" style="font-family: 'Times New Roman'; font-size: 14px;"></div>
             </div>
             <input type="hidden" name="content[]" id="content_${block.id}">

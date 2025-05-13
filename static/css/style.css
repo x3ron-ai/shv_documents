@@ -378,6 +378,10 @@ button[type="button"]:hover {
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+.document-list li:hover {
+    border: 1px solid black;
+}
+
 .document-list img {
     max-width: 300px;
 }
