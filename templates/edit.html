@@ -20,7 +20,7 @@
             <form method="POST" id="docForm" enctype="multipart/form-data">
                 {% if not template_id %}
                     <label>Название документа: 
-                        <input type="text" name="title" required>
+                        <input type="text" name="title" minlenght="2" maxlenght="100" required>
                     </label>
                     <label>Выберите шаблон: 
                         <select name="template_id" required>
@@ -45,9 +45,6 @@
             <div id="toc" class="toc"></div>
         </aside>
     </div>
-    <footer class="footer">
-        <p>© 2025 Генератор документов</p>
-    </footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

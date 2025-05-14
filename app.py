@@ -290,6 +290,8 @@ def create_template():
         line_spacing = request.form.get('line_spacing', '1.5')
 
         logger.info(f"Создание шаблона: title={title}, title_page={title_page.filename if title_page else None}")
+        if not title_page.filename.endswith('.docx'):
+            return render_template('create_template.html', error='Не удалось создать предпросмотр шаблона. Проверьте файл и попробуйте снова.')
 
         if not title or not title_page or not title_page.filename:
             logger.warning("Не заполнены обязательные поля")

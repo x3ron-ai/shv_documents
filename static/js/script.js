@@ -187,14 +187,12 @@ function addBlock(type, parentId = null, itemId = null) {
             <img id="preview_${block.id}" class="image-preview" style="display: none;">
             <label>Подпись: <input type="text" name="image_caption[]" id="caption_${block.id}" oninput="saveTemplate()"></label>
             <div class="style-menu">
-                <label><input type="checkbox" name="caption_bold[]" onchange="saveTemplate()"> Жирный</label>
                 <label>Размер: <input type="number" name="caption_size[]" min="8" max="72" value="12" onchange="saveTemplate()"></label>
                 <label>Шрифт: <select name="caption_face[]" onchange="saveTemplate()">
                     <option value="Times New Roman" selected>Times New Roman</option>
                     <option value="Arial">Arial</option>
                     <option value="Calibri">Calibri</option>
                 </select></label>
-                <label>Цвет: <input type="color" name="caption_color[]" value="#000000" onchange="saveTemplate()"></label>
             </div>
         `;
     }

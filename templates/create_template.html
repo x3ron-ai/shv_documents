@@ -10,42 +10,23 @@
 <body>
     <header class="header">
         <h1>Создать новый шаблон</h1>
+        {% if error %}
+            <p style="color: #e74c3c;">{{ error }}</p>
+        {% endif %}
     </header>
     <div class="container">
         <main class="document">
             <form method="POST" enctype="multipart/form-data">
                 <label>Название шаблона: 
-                    <input type="text" name="title" required>
+                    <input type="text" name="title" minlenght="2" maxlenght="100" required>
                 </label>
                 <label>Титульный лист (.docx): 
                     <input type="file" name="title_page" accept=".docx" required>
-                </label>
-                <label>Шрифт по умолчанию: 
-                    <select name="font_face">
-                        <option value="Times New Roman" selected>Times New Roman</option>
-                        <option value="Arial">Arial</option>
-                        <option value="Calibri">Calibri</option>
-                    </select>
-                </label>
-                <label>Размер шрифта: 
-                    <input type="number" name="font_size" min="8" max="72" value="14">
-                </label>
-                <label>Отступ слева (см): 
-                    <input type="number" name="indent_left" min="0" step="0.1" value="0">
-                </label>
-                <label>Первая строка (см): 
-                    <input type="number" name="indent_first_line" min="0" step="0.1" value="0">
-                </label>
-                <label>Междустрочный интервал: 
-                    <input type="number" name="line_spacing" min="0.5" step="0.1" value="1.5">
                 </label>
                 <button type="submit" class="generate-btn">Создать шаблон</button>
             </form>
             <a href="{{ url_for('index') }}" class="back-btn">Назад к документам</a>
         </main>
     </div>
-    <footer class="footer">
-        <p>© 2025 Генератор документов</p>
-    </footer>
 </body>
 </html>

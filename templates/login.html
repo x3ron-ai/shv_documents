@@ -5,36 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="header">
         <h1>Вход</h1>
+        {% if error %}
+            <p style="color: #e74c3c;">{{ error }}</p>
+        {% endif %}
     </header>
     <div class="container">
         <main class="document">
             <form method="POST">
-                <label>Логин: 
-                    <input type="text" name="username" required>
+                <label>
+                    <input type="text" name="username" placeholder="Логин" required>
                 </label>
-                <label>Пароль: 
-                    <input type="password" name="password" required>
+                <label> 
+                    <input type="password" name="password"  placeholder="Пароль" required>
                 </label>
                 <button type="submit" class="generate-btn">Войти</button>
             </form>
             <p><a href="{{ url_for('register') }}" class="back-btn">Зарегистрироваться</a></p>
-            <h2>Предпросмотр шаблона</h2>
-            <select onchange="document.getElementById('preview').src = this.value ? this.value : '';">
-                <option value="">Без шаблона</option>
-                {% for template in templates %}
-                    <option value="{{ url_for('static', filename=template.preview_path.replace('static/', '')) }}">{{ template.title }}</option>
-                {% endfor %}
-            </select>
-            <img id="preview" src="" style="max-width: 300px; display: block; margin-top: 10px; border-radius: 4px;">
         </main>
     </div>
-    <footer class="footer">
-        <p>© 2025 Генератор документов</p>
-    </footer>
 </body>
 </html>
